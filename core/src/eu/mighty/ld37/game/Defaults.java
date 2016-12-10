@@ -29,6 +29,11 @@ public final class Defaults {
 
 	public final static int mapWidth = 640 * 5;
 	public final static int mapHeight = 480 * 3;
+	
+	public final static int NUM_HEIGHT_REGIONS = 30;
+	public final static int NUM_WIDTH_REGIONS = 50;
+	public final static int NUM_WIDTH_ZONES = 5;
+	public final static int NUM_HEIGHT_ZONES = 3;
 
 	public final static float CAMERA_CENTER_SHIFT_X = 640 / 4;
 	public final static float CAMERA_CENTER_SHIFT_X_MAX_SPEED = 640 / 8;
