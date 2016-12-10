@@ -115,7 +115,6 @@ public class RenderingSystem extends IteratingSystem {
             }
 
             TransformComponent t = transformM.get(entity);
-			System.out.println(t.scale.x);
 
             float width = tex.region.getRegionWidth();
             float height = tex.region.getRegionHeight();

@@ -54,18 +54,7 @@ public class BattleScreen implements Screen {
 		this.entityEngine.addSystem(new CollidableSystem());
 		this.entityEngine.addSystem(new HealthSystem());
 
-
-		Texture texWoman1 = new Texture(
-				Gdx.files.internal(Defaults.womanBackgroundTextureFile));
-		Texture texWoman2 = new Texture(
-				Gdx.files.internal(Defaults.womanBackgroundTextureFile));
-
-		createBackground(Defaults.deepestBackgroundTextureFile, new Vector2(
-				Defaults.windowWidth * -1, 0), new Vector2(1, 1), 2f, 0);
-		createBackground(texWoman1, new Vector2(0, 0), new Vector2(2f, 2f),
-				1f, 0.3f);
-		createBackground(texWoman1, new Vector2(texWoman1.getWidth() * 5, 0),
-				new Vector2(3, 3), 1f, 0.3f);
+		createBackgrounds();
 		createPlayer();
 		createFriendTeam();
 		createEnemyTeam();
@@ -141,10 +130,29 @@ public class BattleScreen implements Screen {
 		this.entityEngine.addEntity(entity);
 	}
 
-	private void createBackground(Texture tex, float depth,
-			float parallaxVelocityFactor) {
-		createBackground(tex, new Vector2(0, 0), new Vector2(1, 1), depth,
-				parallaxVelocityFactor);
+	private void createBackgrounds() {
+		Texture texWoman1 = new Texture(
+				Gdx.files.internal(Defaults.womanBackgroundTextureFile));
+		Texture texWoman2 = new Texture(
+				Gdx.files.internal(Defaults.woman2BackgroundTextureFile));
+		Texture man = new Texture(
+				Gdx.files.internal(Defaults.manBackgroundTextureFile));
+		Texture spider = new Texture(
+				Gdx.files.internal(Defaults.spiderBackgroundTextureFile));
+
+		createBackground(Defaults.deepestBackgroundTextureFile, new Vector2(
+				Defaults.windowWidth * -1, 0), new Vector2(1, 1), 2f, 0);
+		createBackground(texWoman1, new Vector2(0, 0), new Vector2(3f, 3f), 1f,
+				0.1f);
+		createBackground(texWoman2, new Vector2(texWoman1.getWidth() * 5, 0),
+				new Vector2(6, 6), 1f, 0.2f);
+		createBackground(man, new Vector2(man.getWidth() * 2, 0), new Vector2(
+				3, 3), 1f, -0.2f);
+		createBackground(man, new Vector2(man.getWidth() * 2, 0), new Vector2(
+				3, 3), 1f, -0.2f);
+		createBackground(spider, new Vector2(Defaults.mapWidth * 3 / 4,
+				Defaults.mapHeight - 2 * spider.getHeight()), new Vector2(0.4f,
+				0.4f), 1f, -0.1f);
 	}
 
 	private void createBackground(String textureFile, Vector2 positionInScreen,

@@ -20,9 +20,10 @@ public final class Defaults {
 	public final static String missileBasicTextureFile = "misils/basic.png";
 	public final static int missileBasicSpeed = 500;
 
-	public final static String blueBackgroundTextureFile = "backgrounds/blueLayer.png";
-	public final static String yellowBackgroundTextureFile = "backgrounds/yellowLayer.png";
 	public final static String womanBackgroundTextureFile = "backgrounds/womanLayer.png";
+	public final static String woman2BackgroundTextureFile = "backgrounds/woman2Layer.png";
+	public final static String manBackgroundTextureFile = "backgrounds/manLayer.png";
+	public final static String spiderBackgroundTextureFile = "backgrounds/spiderLayer.png";
 	public final static String deepestBackgroundTextureFile = "backgrounds/background.png";
 
 	public final static String windowTitle = "Naves test I";
