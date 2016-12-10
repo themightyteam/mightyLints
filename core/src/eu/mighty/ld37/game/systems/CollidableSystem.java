@@ -2,10 +2,7 @@ package eu.mighty.ld37.game.systems;
 
 import com.badlogic.ashley.core.*;
 import com.badlogic.ashley.utils.ImmutableArray;
-import eu.mighty.ld37.game.components.CollidableComponent;
-import eu.mighty.ld37.game.components.ExplosionComponent;
-import eu.mighty.ld37.game.components.TeamComponent;
-import eu.mighty.ld37.game.components.TransformComponent;
+import eu.mighty.ld37.game.components.*;
 
 public class CollidableSystem extends EntitySystem {
 
@@ -29,6 +26,7 @@ public class CollidableSystem extends EntitySystem {
 		CollidableComponent collidablei, collidablej;
 		ExplosionComponent explosioni, explosionj;
 		TeamComponent teami, teamj;
+		BulletComponent bulleti, bulletj;
 
 		for (int i = 0; i < entities.size(); i++) {
 
@@ -46,15 +44,29 @@ public class CollidableSystem extends EntitySystem {
 					&&(Math.abs(transformi.pos.y - transformj.pos.y) < collidablei.collidable_zone.getHeight())) {
 					explosioni = entityi.getComponent(ExplosionComponent.class);
 					explosionj = entityj.getComponent(ExplosionComponent.class);
+					bulleti = entityi.getComponent(BulletComponent.class);
+					bulletj = entityj.getComponent(BulletComponent.class);
+					//playeri = entityi.getComponent(PlayerComponent.class);
+					//playerj = entityj.getComponent(PlayerComponent.class);
 					if (explosioni != null) {
 						explosioni.destroyed = true;
 						teami = entityi.getComponent(TeamComponent.class);
-						if (teami != null) System.out.println("Equipo " + teami.team + " pierde nave");
+						if (teami != null) {
+							if (entityi.getComponent(HealthComponent.class) != null) {
+								entityi.getComponent(HealthComponent.class).health -= 10;
+								System.out.println("Daño en equipo: " + teami.team);
+							}
+						}
 					}
 					if (explosionj != null) {
 						explosionj.destroyed = true;
-						teamj = entityi.getComponent(TeamComponent.class);
-						if (teamj != null) System.out.println("Equipo " + teamj.team + " pierde nave");
+						teamj = entityj.getComponent(TeamComponent.class);
+						if (teamj != null) {
+							if (entityj.getComponent(HealthComponent.class) != null) {
+								entityj.getComponent(HealthComponent.class).health -= 10;
+								System.out.println("Daño en equipo: " + teamj.team);
+							}
+						}
 					}
 				}
 			}

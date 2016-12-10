@@ -36,6 +36,7 @@ public class BattleScreen implements Screen {
 		this.entityEngine.addSystem(new ParallaxSystem());
 		this.entityEngine.addSystem(new RenderingSystem(game.batcher));
 		this.entityEngine.addSystem(new CollidableSystem());
+		this.entityEngine.addSystem(new HealthSystem());
 
 
 		Texture texYellow = new Texture(
@@ -196,6 +197,9 @@ public class BattleScreen implements Screen {
 				.createComponent(CollidableComponent.class);
 		TeamComponent teamComponent = this.entityEngine
 				.createComponent(TeamComponent.class);
+		HealthComponent health = this.entityEngine
+				.createComponent(HealthComponent.class);
+
 
 		position.pos.set(getRandomPosition());
 		if (velocity > 0) {
@@ -212,6 +216,7 @@ public class BattleScreen implements Screen {
 		collidable.collidable_zone = new Rectangle(0, 0, tex.getWidth()-1, tex.getHeight()-1);
 
 		teamComponent.team = team;
+		health.health = 1000;
 
 		exhaust.pe_left = new ParticleEffect();
 		exhaust.pe_right = new ParticleEffect();
@@ -232,6 +237,7 @@ public class BattleScreen implements Screen {
 		entity.add(explosion);
 		entity.add(collidable);
 		entity.add(teamComponent);
+		entity.add(health);
 
 		return entity;
 	}
