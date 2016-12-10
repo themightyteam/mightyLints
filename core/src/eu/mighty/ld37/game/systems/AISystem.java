@@ -47,9 +47,12 @@ public class AISystem extends IteratingSystem {
 		// System.out.println("Entering RenderingSystem's update");
 		super.update(deltaTime);
 
+		ArrayList<Integer> 
+		
 		//TODO: processing stuff here
-		for (Integer key : this.entityMap)
+		for (Integer key : this.entityMap.keySet())
 		{
+			
 			
 		}
 		

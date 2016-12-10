@@ -172,8 +172,10 @@ public class RenderingSystem extends IteratingSystem {
             explosion.pe_explosion.update(deltaTime);
             if (explosion.destroyed) {
                 explosion.pe_explosion.getEmitters().first().setPosition(t.pos.x, t.pos.y);
+                if (explosion.pe_explosion.isComplete()) {
+                    explosion.pe_explosion.reset();
+                }
                 explosion.destroyed = false;
-                explosion.pe_explosion.reset();
             }
 
             explosion.pe_explosion.draw(batch);
@@ -197,8 +199,8 @@ public class RenderingSystem extends IteratingSystem {
     }
 
     private float calculateCamY(float y) {
-        if (y > FRUSTUM_HEIGHT) return (float)FRUSTUM_HEIGHT;
-        if (y < 0) return 0;
+        if (y > FRUSTUM_HEIGHT*2) return (float)FRUSTUM_HEIGHT*2;
+        if (y < FRUSTUM_HEIGHT/2) return FRUSTUM_HEIGHT/2;
         return y;
     }
 
