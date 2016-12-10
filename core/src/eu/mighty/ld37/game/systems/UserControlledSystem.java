@@ -115,6 +115,13 @@ public class UserControlledSystem extends IteratingSystem {
 
 		position.pos.set(pos);
 
+		if (velocity.x > 0) {
+			position.pos.x += Defaults.PLAYER_WIDTH;
+		} else {
+			position.pos.x -= Defaults.PLAYER_WIDTH;
+		}
+
+
 		movement.velocity.set(velocity.x, velocity.y);
 
 		entity.add(missileComponent);
