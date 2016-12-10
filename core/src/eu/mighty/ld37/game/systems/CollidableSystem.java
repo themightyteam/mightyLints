@@ -8,10 +8,6 @@ import eu.mighty.ld37.game.components.TeamComponent;
 import eu.mighty.ld37.game.components.TransformComponent;
 
 public class CollidableSystem extends EntitySystem {
-	private ComponentMapper<CollidableComponent> cm = ComponentMapper.getFor(CollidableComponent.class);
-	private ComponentMapper<TransformComponent> tm = ComponentMapper.getFor(TransformComponent.class);
-	private ComponentMapper<ExplosionComponent> em = ComponentMapper.getFor(ExplosionComponent.class);
-	private ComponentMapper<TeamComponent> teamM = ComponentMapper.getFor(TeamComponent.class);
 
 	private ImmutableArray<Entity> entities;
 
@@ -19,13 +15,13 @@ public class CollidableSystem extends EntitySystem {
 
 	@Override
 	public void addedToEngine(Engine engine) {
-		entities = engine.getEntitiesFor(Family.all(CollidableComponent.class, TransformComponent.class).get());
+		entities = engine.getEntitiesFor(Family.all(CollidableComponent.class).get());
 	}
 
 
 	@Override
 	public void update(float deltaTime) {
-		// System.out.println("Entering MovementSystem's processEntity");
+
 		super.update(deltaTime);
 
 		Entity entityi, entityj;
@@ -34,40 +30,35 @@ public class CollidableSystem extends EntitySystem {
 		ExplosionComponent explosioni, explosionj;
 		TeamComponent teami, teamj;
 
-		for (int i=0; i<entities.size(); i++) {
+		for (int i = 0; i < entities.size(); i++) {
 
 			entityi = entities.get(i);
-			transformi = tm.get(entityi);
-			collidablei = cm.get(entityi);
+			transformi = entityi.getComponent(TransformComponent.class);
+			collidablei = entityi.getComponent(CollidableComponent.class);
 
 			for (int j=i+1; j<entities.size(); j++) {
+
 				entityj = entities.get(j);
-				transformj = tm.get(entityj);
-				collidablej = cm.get(entityj);
+				transformj = entityj.getComponent(TransformComponent.class);
+				collidablej = entityj.getComponent(CollidableComponent.class);
 
 				if ((Math.abs(transformi.pos.x - transformj.pos.x) < collidablei.collidable_zone.getWidth())
 					&&(Math.abs(transformi.pos.y - transformj.pos.y) < collidablei.collidable_zone.getHeight())) {
-					explosioni = em.get(entityi);
-					explosionj = em.get(entityj);
+					explosioni = entityi.getComponent(ExplosionComponent.class);
+					explosionj = entityj.getComponent(ExplosionComponent.class);
 					if (explosioni != null) {
 						explosioni.destroyed = true;
-						teami = teamM.get(entityi);
+						teami = entityi.getComponent(TeamComponent.class);
 						if (teami != null) System.out.println("Equipo " + teami.team + " pierde nave");
 					}
 					if (explosionj != null) {
 						explosionj.destroyed = true;
-						teamj = teamM.get(entityj);
+						teamj = entityi.getComponent(TeamComponent.class);
 						if (teamj != null) System.out.println("Equipo " + teamj.team + " pierde nave");
 					}
-
 				}
-
-
-
 			}
-
 		}
-
 	}
 }
 

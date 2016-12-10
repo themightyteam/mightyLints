@@ -82,6 +82,9 @@ public class BattleScreen implements Screen {
 				.createComponent(ExplosionComponent.class);
 		CollidableComponent collidable = this.entityEngine
 				.createComponent(CollidableComponent.class);
+		TeamComponent teamComponent = this.entityEngine
+				.createComponent(TeamComponent.class);
+
 
 		position.pos.set(Gdx.graphics.getWidth() / 2,
 				Gdx.graphics.getHeight() / 2, 0.0f);
@@ -92,6 +95,8 @@ public class BattleScreen implements Screen {
 				Gdx.files.internal(Defaults.playerTextureFile));
 		texture.region = new TextureRegion(tex, 0, 0, tex.getWidth() - 1,
 				tex.getHeight() - 1);
+
+		teamComponent.team = Defaults.FRIEND_TEAM;
 
 		collidable.collidable_zone = new Rectangle(0, 0, tex.getWidth()-1, tex.getHeight()-1);
 
@@ -115,6 +120,7 @@ public class BattleScreen implements Screen {
 		entity.add(exhaust);
 		entity.add(explosion);
 		entity.add(collidable);
+		entity.add(teamComponent);
 
 		this.entityEngine.addEntity(entity);
 	}

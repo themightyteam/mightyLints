@@ -1,5 +1,6 @@
 package eu.mighty.ld37.game;
 
+
 public final class Defaults {
 	public final static float MAX_SPEED_X = 400;
 	public final static float MAX_SPEED_Y = 150;
@@ -42,4 +43,5 @@ public final class Defaults {
 	public static final int NO_TEAM = 0;
 	public static final int FRIEND_TEAM = 1;
 	public static final int ENEMY_TEAM = 2;
+
 }
