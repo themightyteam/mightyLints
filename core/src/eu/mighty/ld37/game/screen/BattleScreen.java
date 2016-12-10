@@ -10,12 +10,28 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-
 import com.badlogic.gdx.math.Vector3;
+
 import eu.mighty.ld37.MightyLD37Game;
 import eu.mighty.ld37.game.Defaults;
-import eu.mighty.ld37.game.components.*;
-import eu.mighty.ld37.game.systems.*;
+import eu.mighty.ld37.game.components.BackgroundComponent;
+import eu.mighty.ld37.game.components.CollidableComponent;
+import eu.mighty.ld37.game.components.ExhaustComponent;
+import eu.mighty.ld37.game.components.ExplosionComponent;
+import eu.mighty.ld37.game.components.HasWeaponComponent;
+import eu.mighty.ld37.game.components.HealthComponent;
+import eu.mighty.ld37.game.components.MovementComponent;
+import eu.mighty.ld37.game.components.PlayerComponent;
+import eu.mighty.ld37.game.components.TeamComponent;
+import eu.mighty.ld37.game.components.TextureComponent;
+import eu.mighty.ld37.game.components.TransformComponent;
+import eu.mighty.ld37.game.systems.BulletSystem;
+import eu.mighty.ld37.game.systems.CollidableSystem;
+import eu.mighty.ld37.game.systems.HealthSystem;
+import eu.mighty.ld37.game.systems.MovementSystem;
+import eu.mighty.ld37.game.systems.ParallaxSystem;
+import eu.mighty.ld37.game.systems.RenderingSystem;
+import eu.mighty.ld37.game.systems.UserControlledSystem;
 
 public class BattleScreen implements Screen {
 
@@ -39,18 +55,14 @@ public class BattleScreen implements Screen {
 		this.entityEngine.addSystem(new HealthSystem());
 
 
-		Texture texYellow = new Texture(
-				Gdx.files.internal(Defaults.yellowBackgroundTextureFile));
-		Texture texBlue = new Texture(
-				Gdx.files.internal(Defaults.blueBackgroundTextureFile));
+		Texture texWoman = new Texture(
+				Gdx.files.internal(Defaults.womanBackgroundTextureFile));
 
 		createBackground(Defaults.deepestBackgroundTextureFile, new Vector2(
 				Defaults.windowWidth * -1, 0), 2f, 0);
-		createBackground(texYellow, 1f, 1);
-		createBackground(texYellow, new Vector2(texYellow.getWidth(), 0), 1f, 1);
-		createBackground(texBlue, 1f, 2);
-		createBackground(texBlue, new Vector2(texBlue.getWidth(), 0), 1f, 2);
-		createBackground(texBlue, new Vector2(texBlue.getWidth() * 2, 0), 1f, 2);
+		createBackground(texWoman, 1f, 1);
+		createBackground(texWoman, new Vector2(texWoman.getWidth() * 5, 0), 1f,
+				0.3f);
 		createPlayer();
 		createFriendTeam();
 		createEnemyTeam();

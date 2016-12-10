@@ -22,6 +22,7 @@ public final class Defaults {
 
 	public final static String blueBackgroundTextureFile = "backgrounds/blueLayer.png";
 	public final static String yellowBackgroundTextureFile = "backgrounds/yellowLayer.png";
+	public final static String womanBackgroundTextureFile = "backgrounds/womanLayer.png";
 	public final static String deepestBackgroundTextureFile = "backgrounds/background.png";
 
 	public final static String windowTitle = "Naves test I";
