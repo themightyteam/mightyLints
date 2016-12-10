@@ -170,7 +170,7 @@ public class BattleScreen implements Screen {
 	}
 
 
-	private Entity createShip(String textureFile, float velocity) {
+	private Entity createShip(String textureFile, float velocity, int team) {
 		Entity entity = this.entityEngine.createEntity();
 
 		TextureComponent texture = this.entityEngine
@@ -188,7 +188,8 @@ public class BattleScreen implements Screen {
 				.createComponent(ExplosionComponent.class);
 		CollidableComponent collidable = this.entityEngine
 				.createComponent(CollidableComponent.class);
-
+		TeamComponent teamComponent = this.entityEngine
+				.createComponent(TeamComponent.class);
 
 		position.pos.set(getRandomPosition());
 		if (velocity > 0) {
@@ -203,6 +204,8 @@ public class BattleScreen implements Screen {
 				tex.getHeight() - 1);
 
 		collidable.collidable_zone = new Rectangle(0, 0, tex.getWidth()-1, tex.getHeight()-1);
+
+		teamComponent.team = team;
 
 		exhaust.pe_left = new ParticleEffect();
 		exhaust.pe_right = new ParticleEffect();
@@ -222,6 +225,7 @@ public class BattleScreen implements Screen {
 		entity.add(exhaust);
 		entity.add(explosion);
 		entity.add(collidable);
+		entity.add(teamComponent);
 
 		return entity;
 	}
@@ -229,13 +233,13 @@ public class BattleScreen implements Screen {
 
 	private void createEnemyTeam() {
 		for (int i = 0; i < Defaults.NUMBER_OF_MEMBERS_IN_ONE_TEAM - 1; i++) {
-			this.entityEngine.addEntity(createShip(Defaults.enemyTextureFile, -300.0f));
+			this.entityEngine.addEntity(createShip(Defaults.enemyTextureFile, 0.0f, Defaults.ENEMY_TEAM));
 		}
 	}
 
 	private void createFriendTeam() {
 		for (int i = 0; i < Defaults.NUMBER_OF_MEMBERS_IN_ONE_TEAM - 2; i++ ) {
-			this.entityEngine.addEntity(createShip(Defaults.friendTextureFile, 100.0f));
+			this.entityEngine.addEntity(createShip(Defaults.friendTextureFile, 0.0f, Defaults.FRIEND_TEAM));
 		}
 	}
 
