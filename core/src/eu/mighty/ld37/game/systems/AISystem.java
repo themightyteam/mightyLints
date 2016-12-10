@@ -1,5 +1,6 @@
 package eu.mighty.ld37.game.systems;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.badlogic.ashley.core.ComponentMapper;
@@ -12,6 +13,7 @@ import eu.mighty.ld37.game.ai.FlatMapProcessor;
 import eu.mighty.ld37.game.components.AIComponent;
 import eu.mighty.ld37.game.components.BulletComponent;
 import eu.mighty.ld37.game.components.PlayerComponent;
+import eu.mighty.ld37.game.components.TeamComponent;
 import eu.mighty.ld37.game.components.TransformComponent;
 
 public class AISystem extends IteratingSystem {
@@ -21,6 +23,7 @@ public class AISystem extends IteratingSystem {
 	private ComponentMapper<AIComponent> aiMapper;	
 	private ComponentMapper<BulletComponent> bulletMapper;
 	private ComponentMapper<PlayerComponent> playerMapper;
+	private ComponentMapper<TeamComponent> teamMapper;
 
 	public AISystem(){	
 		this(Family.all(TransformComponent.class).one(BulletComponent.class, PlayerComponent.class)
@@ -40,6 +43,8 @@ public class AISystem extends IteratingSystem {
 		
 		//Obtain the mappers
 		this.aiMapper = ComponentMapper.getFor(AIComponent.class);
+		this.bulletMapper = ComponentMapper.getFor(BulletComponent.class);
+		this.teamMapper = ComponentMapper.getFor(TeamComponent.class);
 	}
 
 	@Override
@@ -47,16 +52,16 @@ public class AISystem extends IteratingSystem {
 		// System.out.println("Entering RenderingSystem's update");
 		super.update(deltaTime);
 
-		ArrayList<Integer> 
 		
 		//TODO: processing stuff here
 		for (Integer key : this.entityMap.keySet())
 		{
-			
+			//TOOD 
+			//1) if decision and path then continue
+			//2) if decision and not path the path
+			//3) if not decision then decision and after that path
 			
 		}
-		
-		
 		
 		//Delete the map with the entities in the current slot
 		this.entityMap.clear();

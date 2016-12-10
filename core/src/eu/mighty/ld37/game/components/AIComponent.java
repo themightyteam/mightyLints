@@ -13,7 +13,11 @@ public class AIComponent implements Component {
 	//Target node of the pathfinding algorithm (if any)
 	public int idTargetNode;
 	
+	//Current zone in the map
+	public int currentZone;
 	
+	//Current region in the map
+	public int currentRegion;
 	
 	
 	
