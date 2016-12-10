@@ -134,4 +134,24 @@ public class FlatMapProcessor extends AbstractMapProcessor {
 		return zoneId;
 	}
 
+	
+	/**
+	 * Returns an id region, given the current x,y
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public int obtainCurrentRegion(float x, float y)
+	{
+		float widthZone = new Float((1.0 * this.totalWidth)/this.numWidthRegions);
+		float heightZone = new Float((1.0 * this.totalHeight)/this.numHeightRegions);
+		
+		int i = new Float(x/widthZone).intValue();
+		int j = new Float(y/heightZone).intValue();
+		
+		int zoneId = j + i * this.numWidthRegions;
+		
+		return zoneId;
+	}
+	
 }

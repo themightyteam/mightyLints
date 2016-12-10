@@ -1,5 +1,7 @@
 package eu.mighty.ld37.game.components;
 
+import ai.pathfinding.commons.PredictedPath;
+
 import com.badlogic.ashley.core.Component;
 
 public class AIComponent implements Component {
@@ -13,12 +15,16 @@ public class AIComponent implements Component {
 	//Target node of the pathfinding algorithm (if any)
 	public int idTargetNode;
 	
+	//Expected next node in the pathfinding algorithm
+	public int idExpectedNode;
+	
 	//Current zone in the map
 	public int currentZone;
 	
 	//Current region in the map
 	public int currentRegion;
 	
+	public PredictedPath currentPath;
 	
 	
 }
