@@ -15,7 +15,12 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 
 import eu.mighty.ld37.game.Defaults;
-import eu.mighty.ld37.game.components.*;
+import eu.mighty.ld37.game.components.ExhaustComponent;
+import eu.mighty.ld37.game.components.ExplosionComponent;
+import eu.mighty.ld37.game.components.MovementComponent;
+import eu.mighty.ld37.game.components.PlayerComponent;
+import eu.mighty.ld37.game.components.TextureComponent;
+import eu.mighty.ld37.game.components.TransformComponent;
 
 
 public class RenderingSystem extends IteratingSystem {
@@ -110,6 +115,7 @@ public class RenderingSystem extends IteratingSystem {
             }
 
             TransformComponent t = transformM.get(entity);
+			System.out.println(t.scale.x);
 
             float width = tex.region.getRegionWidth();
             float height = tex.region.getRegionHeight();
@@ -117,7 +123,9 @@ public class RenderingSystem extends IteratingSystem {
             float originY = height * 0.5f;
 
             batch.draw(tex.region, t.pos.x - originX, t.pos.y - originY,
-                    originX, originY, width, height, t.scale.x, t.scale.y,
+					originX, originY, width, height,
+					t.scale.x,
+					t.scale.y,
                     MathUtils.radiansToDegrees * t.rotation);
 			// We make the big texture wrap around effect by drawing the same
 			// texture "one screen" on the left and on the right. It can be done

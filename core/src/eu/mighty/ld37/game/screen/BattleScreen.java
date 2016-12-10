@@ -55,14 +55,17 @@ public class BattleScreen implements Screen {
 		this.entityEngine.addSystem(new HealthSystem());
 
 
-		Texture texWoman = new Texture(
+		Texture texWoman1 = new Texture(
+				Gdx.files.internal(Defaults.womanBackgroundTextureFile));
+		Texture texWoman2 = new Texture(
 				Gdx.files.internal(Defaults.womanBackgroundTextureFile));
 
 		createBackground(Defaults.deepestBackgroundTextureFile, new Vector2(
-				Defaults.windowWidth * -1, 0), 2f, 0);
-		createBackground(texWoman, 1f, 1);
-		createBackground(texWoman, new Vector2(texWoman.getWidth() * 5, 0), 1f,
-				0.3f);
+				Defaults.windowWidth * -1, 0), new Vector2(1, 1), 2f, 0);
+		createBackground(texWoman1, new Vector2(0, 0), new Vector2(2f, 2f),
+				1f, 0.3f);
+		createBackground(texWoman1, new Vector2(texWoman1.getWidth() * 5, 0),
+				new Vector2(3, 3), 1f, 0.3f);
 		createPlayer();
 		createFriendTeam();
 		createEnemyTeam();
@@ -138,43 +141,40 @@ public class BattleScreen implements Screen {
 		this.entityEngine.addEntity(entity);
 	}
 
-	private void createBackground(String textureFile,
-			float depth, float parallaxVelocityFactor) {
-		createBackground(textureFile, new Vector2(0, 0), depth,
+	private void createBackground(Texture tex, float depth,
+			float parallaxVelocityFactor) {
+		createBackground(tex, new Vector2(0, 0), new Vector2(1, 1), depth,
 				parallaxVelocityFactor);
 	}
 
-	private void createBackground(Texture tex, float depth,
-			float parallaxVelocityFactor) {
-		createBackground(tex, new Vector2(0, 0), depth, parallaxVelocityFactor);
-	}
-
 	private void createBackground(String textureFile, Vector2 positionInScreen,
-			float depth, float parallaxVelocityFactor) {
+			Vector2 scale, float depth, float parallaxVelocityFactor) {
 		Texture tex = new Texture(Gdx.files.internal(textureFile));
-		createBackground(tex, positionInScreen, depth, parallaxVelocityFactor);
+		createBackground(tex, positionInScreen, new Vector2(1, 1), depth,
+				parallaxVelocityFactor);
 	}
 
 	private void createBackground(Texture tex, Vector2 positionInScreen,
-			float depth, float parallaxVelocityFactor) {
+			Vector2 scale, float depth, float parallaxVelocityFactor) {
 		Entity entity = new Entity();
 
 		BackgroundComponent background = this.entityEngine.createComponent(BackgroundComponent.class);
 		TextureComponent texture = this.entityEngine
 				.createComponent(TextureComponent.class);
-		TransformComponent position = this.entityEngine
+		TransformComponent transform = this.entityEngine
 				.createComponent(TransformComponent.class);
 		MovementComponent movement = this.entityEngine.createComponent(MovementComponent.class);
 
 		texture.region = new TextureRegion(tex, 0, 0, tex.getWidth() - 1, tex.getHeight() - 1);
 
-		position.pos.set(tex.getWidth() / 2 + positionInScreen.x,
+		transform.pos.set(tex.getWidth() / 2 + positionInScreen.x,
 				tex.getHeight() / 2 + positionInScreen.y, depth);
+		transform.scale.set(scale);
 		background.parallaxVelocityFactor = parallaxVelocityFactor;
 
 		entity.add(background);
 		entity.add(movement);
-		entity.add(position);
+		entity.add(transform);
 		entity.add(texture);
 
 		this.entityEngine.addEntity(entity);
