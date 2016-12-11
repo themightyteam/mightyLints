@@ -1,6 +1,7 @@
 package eu.mighty.ld37.game.screen;
 
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -16,6 +17,7 @@ import eu.mighty.ld37.MightyLD37Game;
 import eu.mighty.ld37.game.Defaults;
 import eu.mighty.ld37.game.components.BackgroundComponent;
 import eu.mighty.ld37.game.components.CollidableComponent;
+import eu.mighty.ld37.game.components.DelayedSpawnComponent;
 import eu.mighty.ld37.game.components.ExhaustComponent;
 import eu.mighty.ld37.game.components.HasWeaponComponent;
 import eu.mighty.ld37.game.components.HealthComponent;
@@ -69,6 +71,8 @@ public class BattleScreen implements Screen {
 
 		AudioListener audioListener = new AudioListener(game.audioClips);
 		this.entityEngine.addEntityListener(audioListener);
+		Family family = Family.all(DelayedSpawnComponent.class).get();
+		this.entityEngine.addEntityListener(family, audioListener);
 
 		this.game.musics.playTurkishMarch();
 	}

@@ -28,6 +28,14 @@ public class AudioListener implements EntityListener {
 			this.audioClips.playFire();
 			return;
 		}
+
+		ShipComponent sc = sm.get(entity);
+		System.out.println("playrespawn");
+		if (sc != null) {
+			this.audioClips.playRespawn();
+			return;
+		}
+
 	}
 
 	@Override
