@@ -60,8 +60,17 @@ public class LintSelectionScreen extends DefaultScreen implements Screen {
 	}
 
 	private void handleInput() {
-		if (Gdx.input.isKeyPressed(Input.Keys.ANY_KEY)) {
-			this.mightyGame.setScreen(new BattleScreen(this.mightyGame, Defaults.ROLE_SCORER));
+		int role = -1;
+		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+			role = Defaults.ROLE_SCORER;
+		} else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+			role = Defaults.ROLE_SHOOTER;
+		} else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+			role = Defaults.ROLE_GOAL;
+		}
+
+		if (role != -1) {
+			this.mightyGame.setScreen(new BattleScreen(this.mightyGame, role));
 		}
 	}
 
