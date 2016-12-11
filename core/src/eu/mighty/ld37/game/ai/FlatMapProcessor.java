@@ -69,8 +69,8 @@ public class FlatMapProcessor extends AbstractMapProcessor {
 	public List<PathNode> obtainPathFinding(String pathLayer) {
 		List<PathNode> pathList = new ArrayList<PathNode>();
 
-		float widthZone = new Float((1.0 * this.totalWidth)/this.numWidthZones);
-		float heightZone = new Float((1.0 * this.totalHeight)/this.numHeightZones);
+		float widthZone = new Float((1.0 * this.totalWidth)/this.numWidthRegions);
+		float heightZone = new Float((1.0 * this.totalHeight)/this.numHeightRegions);
 
 		for ( int i = 0; i < this.numWidthRegions; i++)
 		{

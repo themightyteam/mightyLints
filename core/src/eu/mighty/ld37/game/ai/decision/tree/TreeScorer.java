@@ -18,14 +18,14 @@ public class TreeScorer extends BrainTree {
 					myId, aiIteration,
 					new ActionGoToClosestTeammate(myId, aiIteration), 
 					new ActionWanderRandomRegion(myId, aiIteration),
-					0, 
+					0.2, 
 					timeOut );
 
 			RandomBranchFSMNodeWithTimeout branch2 = new RandomBranchFSMNodeWithTimeout(	
 					myId, aiIteration,
 					branch1, 
 					new ActionGoToClosestEnemyGoal(myId, aiIteration),
-					1, 
+					0.3, 
 					timeOut );
 			
 			this.rootNode = branch2;

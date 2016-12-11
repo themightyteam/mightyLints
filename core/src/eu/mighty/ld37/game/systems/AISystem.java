@@ -127,6 +127,8 @@ public class AISystem extends IteratingSystem {
 					aiShip.nextObjPos = new Vector2(
 							new Float(this.aiWorld.getNodeList().get(aiShip.idExpectedNode).getX()),
 							new Float(this.aiWorld.getNodeList().get(aiShip.idExpectedNode).getY()));
+					
+					
 				}
 				else
 				{
@@ -304,6 +306,7 @@ public class AISystem extends IteratingSystem {
 								aiShip.nextObjPos = new Vector2(
 										new Float(this.aiWorld.getNodeList().get(aiShip.idExpectedNode).getX()),
 										new Float(this.aiWorld.getNodeList().get(aiShip.idExpectedNode).getY()));
+								
 							}
 						}
 						else
@@ -345,9 +348,7 @@ public class AISystem extends IteratingSystem {
 			Entity entity,
 			AIShipComponent aiComponent)
 	{
-
 	
-		
 		TransformComponent transComponent = this.transformMapper.get(entity); 
 		float myX = transComponent.pos.x;
 		float myY = transComponent.pos.y;
@@ -394,8 +395,14 @@ public class AISystem extends IteratingSystem {
 		else
 		{
 			rightKeyPressed = true;
+	
 		}
-
+		
+		System.out.println("myX "+ myX);
+		System.out.println("myY "+ myY);
+		System.out.println("X "+objectiveX);
+		System.out.println("Y "+ objectiveY);
+		
 		this.moveLogic.doMovement((PooledEngine) this.getEngine(), 
 				entity, deltaTime, 
 				this.movementMapper, this.transformMapper, this.hasWeaponMapper, spaceKeyPressed,

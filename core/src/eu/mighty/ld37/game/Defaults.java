@@ -57,7 +57,7 @@ public final class Defaults {
 	public static final float TIME_TO_REARM_WEAPON_BASIC_MISSILE_SEC = 0.2f;
 	public static final float TIME_OF_LIFE_BASIC_MISSILE_SEC = 1f;
 
-	public static final int NUMBER_OF_MEMBERS_IN_ONE_TEAM = 7;
+	public static final int NUMBER_OF_MEMBERS_IN_ONE_TEAM = 2;
 	public static final int NO_TEAM = 0;
 	public static final int FRIEND_TEAM = 1;
 	public static final int ENEMY_TEAM = 2;
