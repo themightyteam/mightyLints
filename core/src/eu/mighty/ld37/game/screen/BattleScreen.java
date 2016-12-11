@@ -28,7 +28,14 @@ import eu.mighty.ld37.game.components.TextureComponent;
 import eu.mighty.ld37.game.components.TransformComponent;
 import eu.mighty.ld37.game.listeners.AudioListener;
 import eu.mighty.ld37.game.logic.ScoreLogic;
-import eu.mighty.ld37.game.systems.*;
+import eu.mighty.ld37.game.systems.BulletSystem;
+import eu.mighty.ld37.game.systems.CollidableSystem;
+import eu.mighty.ld37.game.systems.HealthSystem;
+import eu.mighty.ld37.game.systems.MovementSystem;
+import eu.mighty.ld37.game.systems.ParallaxSystem;
+import eu.mighty.ld37.game.systems.RenderingSystem;
+import eu.mighty.ld37.game.systems.RespawnSystem;
+import eu.mighty.ld37.game.systems.UserControlledSystem;
 
 public class BattleScreen implements Screen {
 
@@ -49,7 +56,8 @@ public class BattleScreen implements Screen {
 		this.entityEngine.addSystem(new MovementSystem());
 		this.entityEngine.addSystem(new BulletSystem());
 		this.entityEngine.addSystem(new ParallaxSystem());
-		this.entityEngine.addSystem(new RenderingSystem(game.batcher));
+		this.entityEngine.addSystem(new RenderingSystem(game.batcher,
+				this.scoreLogic));
 		this.entityEngine.addSystem(new CollidableSystem(scoreLogic));
 		this.entityEngine.addSystem(new HealthSystem(game.audioClips));
 		this.entityEngine.addSystem(new RespawnSystem());
