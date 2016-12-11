@@ -1,5 +1,6 @@
 package eu.mighty.ld37.game.components;
 
+import sun.reflect.generics.tree.Tree;
 import ai.pathfinding.commons.PredictedPath;
 
 import com.badlogic.ashley.core.Component;
@@ -18,8 +19,18 @@ public class AIShipComponent extends AIRelevantComponent implements Component {
 	//Expected next node in the pathfinding algorithm
 	public int idExpectedNode;
 	
-
+	//Active path
 	public PredictedPath currentPath;
+	
+	//Active Decision in the decision engine
+	public boolean hasActiveDecision;
+
+	//Time when a tiemout decision was taken
+	public int decisionIt;
+	
+	public int targetShipId;
+	
+	Tree decisionTree;
 	
 	
 }
