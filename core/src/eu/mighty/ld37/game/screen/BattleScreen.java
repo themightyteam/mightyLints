@@ -52,6 +52,9 @@ public class BattleScreen implements Screen {
 	private MightyLD37Game game;
 	private ScoreLogic scoreLogic;
 	private boolean gamePaused = false;
+	
+	private AudioListener audioListener;
+	private AudioRespawnListener audioRespawnListener;
 
 	public BattleScreen(MightyLD37Game mightyLD37Game) {
 		this.game = mightyLD37Game;
@@ -78,10 +81,10 @@ public class BattleScreen implements Screen {
 		createFriendTeam();
 		createEnemyTeam();
 
-		AudioListener audioListener = new AudioListener(game.audioClips, player);
+		audioListener = new AudioListener(game.audioClips, player);
 		this.entityEngine.addEntityListener(audioListener);
 
-		AudioRespawnListener audioRespawnListener = new AudioRespawnListener(
+		audioRespawnListener = new AudioRespawnListener(
 				game.audioClips, player);
 		Family family = Family.all(DelayedSpawnComponent.class).get();
 		this.entityEngine.addEntityListener(family, audioRespawnListener);
@@ -107,11 +110,13 @@ public class BattleScreen implements Screen {
 		if (this.scoreLogic.getPointsFriendTeam() >= Defaults.POINTS_TO_WIN) {
 			this.dispose();
 			this.game.setScreen(new WinScreen(this.game));
+			return;
 		}
 
 		if (this.scoreLogic.getPointsEnemyTeam() >= Defaults.POINTS_TO_WIN) {
 			this.dispose();
 			this.game.setScreen(new WinScreen(this.game));
+			return;
 		}
 	}
 
@@ -467,7 +472,15 @@ public class BattleScreen implements Screen {
 
 	@Override
 	public void dispose() {
+		this.entityEngine.removeEntityListener(this.audioListener);
+		this.audioListener = null;
+		this.entityEngine.removeEntityListener(this.audioRespawnListener);
+		this.audioRespawnListener = null;
 
+		this.entityEngine.removeAllEntities();
+		this.entityEngine.clearPools();
+
+		this.scoreLogic = null;
 	}
 
 }
