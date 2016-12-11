@@ -73,4 +73,10 @@ public final class Defaults {
 	public static final int SCORE_DESTROY = 1;
 	public static final int SCORE_GOAL = 50;
 
+	public static final int ROLE_SHOOTER = 0;
+	public static final int ROLE_SCORER = 1;
+	public static final int ROLE_GOAL = 2;
+
+	public static final float TIME_TO_RESCORE = 3.0f;
+
 }

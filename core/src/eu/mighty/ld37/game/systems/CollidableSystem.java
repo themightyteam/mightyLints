@@ -77,22 +77,28 @@ public class CollidableSystem extends EntitySystem {
 							teami = teamM.get(entityi);
 							teamj = teamM.get(entityj);
 							if (teami.team != teamj.team) {
-								System.out.println("Goal from team " + teami);
-								if (teami.team == Defaults.FRIEND_TEAM) {
-									sl.goalFriendTeam();
-								} else {
-									sl.goalEnemyTeam();
+								if (csi.canScore) {
+									csi.canScore = false;
+									System.out.println("Goal from team " + teami);
+									if (teami.team == Defaults.FRIEND_TEAM) {
+										sl.goalFriendTeam();
+									} else {
+										sl.goalEnemyTeam();
+									}
 								}
 							}
 						} else if (goali != null && csj != null) {
 							teami = teamM.get(entityi);
 							teamj = teamM.get(entityj);
 							if (teami.team != teamj.team) {
-								System.out.println("Goal from team " + teamj);
-								if (teamj.team == Defaults.FRIEND_TEAM) {
-									sl.goalFriendTeam();
-								} else {
-									sl.goalEnemyTeam();
+								if (csj.canScore) {
+									csj.canScore = false;
+									System.out.println("Goal from team " + teamj);
+									if (teamj.team == Defaults.FRIEND_TEAM) {
+										sl.goalFriendTeam();
+									} else {
+										sl.goalEnemyTeam();
+									}
 								}
 							}
 						} else {
@@ -102,7 +108,7 @@ public class CollidableSystem extends EntitySystem {
 								if (teami != null) {
 									if (entityi.getComponent(HealthComponent.class) != null) {
 										entityi.getComponent(HealthComponent.class).health -= 10;
-										System.out.println("Hurt in team: " + teami.team);
+										//System.out.println("Hurt in team: " + teami.team);
 									}
 								}
 							}
@@ -112,7 +118,7 @@ public class CollidableSystem extends EntitySystem {
 								if (teamj != null) {
 									if (entityj.getComponent(HealthComponent.class) != null) {
 										entityj.getComponent(HealthComponent.class).health -= 10;
-										System.out.println("Hurt in team: " + teamj.team);
+										//System.out.println("Hurt in team: " + teamj.team);
 									}
 								}
 							}
