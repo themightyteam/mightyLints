@@ -3,6 +3,7 @@ package eu.mighty.ld37.game.systems;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import ai.decision.decisiontree.DecisionTreeNode;
 import ai.pathfinding.AStar;
 import ai.pathfinding.commons.PathfindingGraph;
 import ai.pathfinding.heu.EstimatedCostHeuristic;
@@ -17,7 +18,10 @@ import com.badlogic.ashley.systems.IteratingSystem;
 import eu.mighty.ld37.game.Defaults;
 import eu.mighty.ld37.game.ai.AIIteration;
 import eu.mighty.ld37.game.ai.FlatMapProcessor;
+import eu.mighty.ld37.game.ai.decision.action.ActionFSMNode;
+import eu.mighty.ld37.game.ai.decision.tree.TreeBludgeoner;
 import eu.mighty.ld37.game.ai.decision.tree.TreeGoalkeeper;
+import eu.mighty.ld37.game.ai.decision.tree.TreeScorer;
 import eu.mighty.ld37.game.components.AIBulletComponent;
 import eu.mighty.ld37.game.components.AIRelevantComponent;
 import eu.mighty.ld37.game.components.AIShipComponent;
@@ -199,9 +203,6 @@ public class AISystem extends IteratingSystem {
 						scoreEnemyTeamList.add(aiShip.idAIObject);
 					}
 				}
-
-
-
 			}
 
 			if (aiBullet != null)
@@ -248,31 +249,46 @@ public class AISystem extends IteratingSystem {
 
 				if (aiShip != null)
 				{
-					if ( aiShip.hasActiveDecision  && aiShip.currentPath != null)
+					if ( aiShip.currentPath != null)
 					{
 						continue;
 					}
 					else
 					{
+						//Take a new decision
+					
+						DecisionTreeNode decision = aiShip.decisionTree.getRootNode().makeDecision();
 						
-						//If path is null then recalculate the path
-						if (aiShip.idTargetNode != aiShip.currentRegion)
+						if (decision instanceof ActionFSMNode)
 						{
-							//System.out.println("CURRENT REGION "+ aiShip.currentRegion);
-							//System.out.println("TARGET NODE "+ aiShip.idTargetNode);
+							ActionFSMNode targetNode = (ActionFSMNode) decision;
 							
+							aiShip.idTargetNode = targetNode.getNextNode();
+						}
+						
+					
+						//If path is null then recalculate the path
+						if (aiShip.idTargetNode != aiShip.currentRegion && aiShip.idTargetNode != -1)
+						{
+							
+							System.out.println("NEW TARGET NODE "+ aiShip.idTargetNode);
+							System.out.println("NEW CURRENT REGION "+aiShip.currentRegion);
+							//System.out.println("CURRENT REGION "+ aiShip.currentRegion);
+								//System.out.println("TARGET NODE "+ aiShip.idTargetNode);
+									
 							aiShip.currentPath = aStar.pathfindAStar( new PathfindingGraph(this.aiWorld.getGraphMap()), 
 									aiShip.currentRegion, 
 									aiShip.idTargetNode, 
 									heuristic);
+							
+							if (aiShip.currentPath.getPredConn().size() > 0)
+								aiShip.idExpectedNode = aiShip.currentPath.getPredConn().get(0).getSinkNodeId();
 						}
 						
 						//A new decision must be performed
 						//TODO
 					}
-				}
-
-				
+				}		
 			}
 		}
 		//Delete the map with the entities in the current slot
@@ -295,6 +311,7 @@ public class AISystem extends IteratingSystem {
 			{
 				//Initialize stuff here
 				aiShipComp.idAIObject = this.currentAIId;
+				aiShipComp.idTargetNode = -1;
 				//Create the new decision system
 				
 				GoalComponent goalShipComp = this.goalMapper.get(entity);
@@ -309,7 +326,7 @@ public class AISystem extends IteratingSystem {
 				{
 					
 					//FIXME: change for a more convenient tree
-					aiShipComp.decisionTree = new TreeGoalkeeper(aiShipComp.idAIObject,
+					aiShipComp.decisionTree = new TreeScorer(aiShipComp.idAIObject,
 							this.nextIteration,
 							Defaults.DECISION_TIMEOUT);
 				}
@@ -317,11 +334,10 @@ public class AISystem extends IteratingSystem {
 				{
 					
 					//FIXME: change for a more convenient tree
-					aiShipComp.decisionTree = new TreeGoalkeeper(aiShipComp.idAIObject,
+					aiShipComp.decisionTree = new TreeBludgeoner(aiShipComp.idAIObject,
 							this.nextIteration,
 							Defaults.DECISION_TIMEOUT);
-				}
-				
+				}		
 				
 				this.currentAIId += 1;
 				//System.out.println("XXXXXXXx CURENT AI "+this.currentAIId);
@@ -340,6 +356,8 @@ public class AISystem extends IteratingSystem {
 				//Initialize stuff here
 				aiBulletComp.idAIObject = this.currentAIId;
 				this.currentAIId += 1;
+				
+
 				//System.out.println("XXXXXXXx CURENT AI "+this.currentAIId);
 			}
 			else

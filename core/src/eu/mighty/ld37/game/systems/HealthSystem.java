@@ -28,8 +28,17 @@ public class HealthSystem extends IteratingSystem {
 		if (hc.health <= 0) {
 			TransformComponent tc = entity.getComponent(TransformComponent.class);
 			createExplosion(tc.pos);
-			respawnShip(entity);
-			this.getEngine().removeEntity(entity);
+			if (entity.getComponent(PlayerComponent.class)==null) {
+				respawnShip(entity);
+				this.getEngine().removeEntity(entity);
+			} else {
+				entity.remove(TextureComponent.class);
+				entity.remove(HealthComponent.class);
+				entity.remove(CollidableComponent.class);
+				DelayedSpawnComponent ds = ((PooledEngine)this.getEngine()).createComponent(DelayedSpawnComponent.class);
+				ds.timeToSpawn = Defaults.RESPAWN_TIME;
+				entity.add(ds);
+			}
 		}
 	}
 

@@ -3,11 +3,15 @@ package eu.mighty.ld37.game.systems;
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.systems.IteratingSystem;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import eu.mighty.ld37.game.Defaults;
-import eu.mighty.ld37.game.components.DelayedSpawnComponent;
-import eu.mighty.ld37.game.components.TransformComponent;
+import eu.mighty.ld37.game.components.*;
 
 public class RespawnSystem extends IteratingSystem {
 	private ComponentMapper<DelayedSpawnComponent> dm = ComponentMapper.getFor(DelayedSpawnComponent.class);
@@ -22,8 +26,23 @@ public class RespawnSystem extends IteratingSystem {
 		System.out.println("Time to respawn: " + delayed.timeToSpawn);
 		delayed.timeToSpawn -= deltaTime;
 		if (delayed.timeToSpawn <= 0) {
-			TransformComponent tc = entity.getComponent(TransformComponent.class);
-			tc.pos.set(getRandomPosition());
+			if (entity.getComponent(PlayerComponent.class) == null) {
+				TransformComponent tc = entity.getComponent(TransformComponent.class);
+				tc.pos.set(getRandomPosition());
+			} else {
+				TextureComponent texture = ((PooledEngine)this.getEngine()).createComponent(TextureComponent.class);
+				HealthComponent health = ((PooledEngine)this.getEngine()).createComponent(HealthComponent.class);
+				CollidableComponent collidable = ((PooledEngine)this.getEngine()).createComponent(CollidableComponent.class);
+				Texture tex = new Texture(
+						Gdx.files.internal(Defaults.playerTextureFile));
+				texture.region = new TextureRegion(tex, 0, 0, tex.getWidth() - 1,
+						tex.getHeight() - 1);
+				collidable.collidable_zone = new Rectangle(0, 0, tex.getWidth()-1, tex.getHeight()-1);
+				health.health = Defaults.HEALTH;
+				entity.add(collidable);
+				entity.add(health);
+				entity.add(texture);
+			}
 			entity.remove(DelayedSpawnComponent.class);
 			System.out.println("Ship respawned!!!!");
 		}

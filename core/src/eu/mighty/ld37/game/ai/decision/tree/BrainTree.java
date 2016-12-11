@@ -18,4 +18,14 @@ public abstract class BrainTree {
 		this.timeOut = timeOut;
 	}
 
+	public DecisionTreeNode getRootNode() {
+		return rootNode;
+	}
+
+	public void setRootNode(DecisionTreeNode rootNode) {
+		this.rootNode = rootNode;
+	}
+	
+	
+
 }
