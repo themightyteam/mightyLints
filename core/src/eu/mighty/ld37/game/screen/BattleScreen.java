@@ -412,7 +412,7 @@ public class BattleScreen implements Screen {
 
 		String goalTextureFile = Defaults.orangeGoalShipTextureFile;
 		role = Defaults.ROLE_GOAL;
-		numShips = playerRole == Defaults.ROLE_GOAL ? 1 : 2;
+		numShips = playerRole == Defaults.ROLE_GOAL ? 2 : 3;
 		for (int i=0; i<numShips; i++) {
 			this.entityEngine.addEntity(createShip(goalTextureFile, role, Defaults.FRIEND_TEAM));
 		}
@@ -435,6 +435,7 @@ public class BattleScreen implements Screen {
 
 		String goalTextureFile = Defaults.orangeGoalShipTextureFile;
 		role = Defaults.ROLE_GOAL;
+		this.entityEngine.addEntity(createShip(goalTextureFile, role, Defaults.ENEMY_TEAM));
 		this.entityEngine.addEntity(createShip(goalTextureFile, role, Defaults.ENEMY_TEAM));
 		this.entityEngine.addEntity(createShip(goalTextureFile, role, Defaults.ENEMY_TEAM));
 	}

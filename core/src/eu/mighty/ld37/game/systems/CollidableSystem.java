@@ -79,7 +79,7 @@ public class CollidableSystem extends EntitySystem {
 							if (teami.team != teamj.team) {
 								if (csi.canScore) {
 									csi.canScore = false;
-									System.out.println("Goal from team " + teami);
+									//System.out.println("Goal from team " + teami);
 									if (teami.team == Defaults.FRIEND_TEAM) {
 										sl.goalFriendTeam();
 									} else {
@@ -94,7 +94,7 @@ public class CollidableSystem extends EntitySystem {
 							if (teami.team != teamj.team) {
 								if (csj.canScore) {
 									csj.canScore = false;
-									System.out.println("Goal from team " + teamj);
+									//System.out.println("Goal from team " + teamj);
 									if (teamj.team == Defaults.FRIEND_TEAM) {
 										sl.goalFriendTeam();
 									} else {
