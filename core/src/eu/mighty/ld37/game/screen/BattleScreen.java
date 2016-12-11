@@ -71,7 +71,7 @@ public class BattleScreen implements Screen {
 				this.scoreLogic));
 		this.entityEngine.addSystem(new CollidableSystem(scoreLogic));
 		this.entityEngine.addSystem(new HealthSystem(game.audioClips, scoreLogic));
-		this.entityEngine.addSystem(new RespawnSystem());
+		this.entityEngine.addSystem(new RespawnSystem(playerRole));
 		this.entityEngine.addSystem(new AISystem());
 		this.entityEngine.addSystem(new CanScoreSystem());
 		createBackgrounds();
