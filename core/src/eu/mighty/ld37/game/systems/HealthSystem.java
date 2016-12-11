@@ -78,7 +78,7 @@ public class HealthSystem extends IteratingSystem {
 //
 //		this.getEngine().addEntity(newEntity);
 
-		Entity newEntity = new Entity();
+		Entity newEntity = ((PooledEngine)this.getEngine()).createEntity();
 
 		ShipComponent ship = ((PooledEngine)this.getEngine())
 				.createComponent(ShipComponent.class);
@@ -102,7 +102,7 @@ public class HealthSystem extends IteratingSystem {
 				.createComponent(HealthComponent.class);
 
 
-		position.pos.set(0, 0, 0);
+		position.pos.set(0, Defaults.mapHeight*2, 0);
 		position.rotation = Defaults.PLAYER_ROTATION_HEADING_RIGHT;
 
 		TextureComponent tc = entity.getComponent(TextureComponent.class);
@@ -128,6 +128,7 @@ public class HealthSystem extends IteratingSystem {
 		hurt.pe_hurt.start();
 
 		DelayedSpawnComponent dc = ((PooledEngine)this.getEngine()).createComponent(DelayedSpawnComponent.class);
+		dc.timeToSpawn = Defaults.RESPAWN_TIME;
 		newEntity.add(dc);
 
 		System.out.println("Ship scheduled to respawn");
@@ -143,6 +144,8 @@ public class HealthSystem extends IteratingSystem {
 		newEntity.add(collidable);
 		newEntity.add(teamComponent);
 		newEntity.add(health);
+
+		this.getEngine().addEntity(newEntity);
 
 	}
 
