@@ -119,7 +119,7 @@ public class BattleScreen implements Screen {
 
 		if (this.scoreLogic.getPointsEnemyTeam() >= Defaults.POINTS_TO_WIN) {
 			this.dispose();
-			this.game.setScreen(new WinScreen(this.game));
+			this.game.setScreen(new LoseScreen(this.game));
 			return;
 		}
 	}
