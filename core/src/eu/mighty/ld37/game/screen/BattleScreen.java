@@ -58,7 +58,8 @@ public class BattleScreen implements Screen {
 		this.entityEngine.addSystem(new MovementSystem());
 		this.entityEngine.addSystem(new BulletSystem());
 		this.entityEngine.addSystem(new ParallaxSystem());
-		this.entityEngine.addSystem(new RenderingSystem(game.batcher));
+		this.entityEngine.addSystem(new RenderingSystem(game.batcher,
+				this.scoreLogic));
 		this.entityEngine.addSystem(new CollidableSystem(scoreLogic));
 		this.entityEngine.addSystem(new HealthSystem(game.audioClips));
 		this.entityEngine.addSystem(new RespawnSystem());

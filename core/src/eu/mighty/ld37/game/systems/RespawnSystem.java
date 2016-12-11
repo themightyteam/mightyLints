@@ -6,7 +6,6 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.math.Vector3;
 import eu.mighty.ld37.game.Defaults;
-import eu.mighty.ld37.game.components.BulletComponent;
 import eu.mighty.ld37.game.components.DelayedSpawnComponent;
 import eu.mighty.ld37.game.components.TransformComponent;
 
@@ -20,9 +19,8 @@ public class RespawnSystem extends IteratingSystem {
 	@Override
 	public void processEntity(Entity entity, float deltaTime) {
 		DelayedSpawnComponent delayed = dm.get(entity);
-
+		System.out.println("Time to respawn: " + delayed.timeToSpawn);
 		delayed.timeToSpawn -= deltaTime;
-		System.out.println("Time to spawn: " + delayed.timeToSpawn);
 		if (delayed.timeToSpawn <= 0) {
 			TransformComponent tc = entity.getComponent(TransformComponent.class);
 			tc.pos.set(getRandomPosition());

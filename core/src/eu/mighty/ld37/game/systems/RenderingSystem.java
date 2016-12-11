@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.Array;
 
 import eu.mighty.ld37.game.Defaults;
 import eu.mighty.ld37.game.assets.MiniMapRenderer;
+import eu.mighty.ld37.game.assets.ScoresRenderer;
 import eu.mighty.ld37.game.components.ExhaustComponent;
 import eu.mighty.ld37.game.components.ExplosionComponent;
 import eu.mighty.ld37.game.components.HurtComponent;
@@ -22,6 +23,7 @@ import eu.mighty.ld37.game.components.MovementComponent;
 import eu.mighty.ld37.game.components.PlayerComponent;
 import eu.mighty.ld37.game.components.TextureComponent;
 import eu.mighty.ld37.game.components.TransformComponent;
+import eu.mighty.ld37.game.logic.ScoreLogic;
 
 
 
@@ -37,8 +39,10 @@ public class RenderingSystem extends IteratingSystem {
     private float camPosX;
     private boolean camPosXLocked;
     private float lastRotation;
+	private ScoreLogic scoreLogic;
 
 	private MiniMapRenderer miniMapRenderer;
+	private ScoresRenderer scoresRenderer;
 
     private ComponentMapper<TextureComponent> textureM;
     private ComponentMapper<TransformComponent> transformM;
@@ -48,7 +52,7 @@ public class RenderingSystem extends IteratingSystem {
     private ComponentMapper<HurtComponent> hurtM;
     private ComponentMapper<MovementComponent> movementM;
 
-    public RenderingSystem(SpriteBatch batch) {
+	public RenderingSystem(SpriteBatch batch, ScoreLogic scoreLogic) {
         super(Family.all(TransformComponent.class)
                 .one(ExplosionComponent.class, TextureComponent.class)
                 .get());
@@ -72,6 +76,7 @@ public class RenderingSystem extends IteratingSystem {
         };
 
         this.batch = batch;
+		this.scoreLogic = scoreLogic;
 
         this.cam = new OrthographicCamera(FRUSTUM_WIDTH, FRUSTUM_HEIGHT);
 
@@ -84,6 +89,7 @@ public class RenderingSystem extends IteratingSystem {
         fpsLogger = new FPSLogger();
 
 		this.miniMapRenderer = new MiniMapRenderer();
+		this.scoresRenderer = new ScoresRenderer();
     }
 
     @Override
@@ -198,11 +204,11 @@ public class RenderingSystem extends IteratingSystem {
                 hurt.pe_hurt.draw(batch);
             }
         }
-
 		batch.end();
 
 		miniMapRenderer.render(renderQueue);
-
+		scoresRenderer.render(this.scoreLogic.getPointsFriendTeam(),
+				this.scoreLogic.getPointsEnemyTeam());
         renderQueue.clear();
 
         fpsLogger.log();
