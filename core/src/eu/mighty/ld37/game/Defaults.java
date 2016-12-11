@@ -35,7 +35,7 @@ public final class Defaults {
 	public final static String spiderBackgroundTextureFile = "backgrounds/spiderLayer.png";
 	public final static String deepestBackgroundTextureFile = "backgrounds/background.png";
 
-	public final static String windowTitle = "Naves test I";
+	public final static String windowTitle = "Mighty Lints";
 	public final static int windowWidth = 640;
 	public final static int windowHeight = 480;
 
