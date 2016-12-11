@@ -11,11 +11,8 @@ import eu.mighty.ld37.game.components.HealthComponent;
 public class HealthSystem extends IteratingSystem {
 	private ComponentMapper<HealthComponent> hm = ComponentMapper.getFor(HealthComponent.class);
 
-	private AudioClips audioClips;
-
 	public HealthSystem(AudioClips audioClips) {
 		super(Family.all(HealthComponent.class).get());
-		this.audioClips = audioClips;
 	}
 
 	@Override
@@ -24,7 +21,6 @@ public class HealthSystem extends IteratingSystem {
 
 		if (hc.health <= 0) {
 			this.getEngine().removeEntity(entity);
-			this.audioClips.playExplosion();
 		}
 	}
 }

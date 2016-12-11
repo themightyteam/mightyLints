@@ -22,9 +22,11 @@ import eu.mighty.ld37.game.components.HasWeaponComponent;
 import eu.mighty.ld37.game.components.HealthComponent;
 import eu.mighty.ld37.game.components.MovementComponent;
 import eu.mighty.ld37.game.components.PlayerComponent;
+import eu.mighty.ld37.game.components.ShipComponent;
 import eu.mighty.ld37.game.components.TeamComponent;
 import eu.mighty.ld37.game.components.TextureComponent;
 import eu.mighty.ld37.game.components.TransformComponent;
+import eu.mighty.ld37.game.listeners.AudioListener;
 import eu.mighty.ld37.game.systems.BulletSystem;
 import eu.mighty.ld37.game.systems.CollidableSystem;
 import eu.mighty.ld37.game.systems.HealthSystem;
@@ -46,7 +48,7 @@ public class BattleScreen implements Screen {
 	public void show() {
 		this.entityEngine = new PooledEngine();
 
-		this.entityEngine.addSystem(new UserControlledSystem(game.audioClips));
+		this.entityEngine.addSystem(new UserControlledSystem());
 		this.entityEngine.addSystem(new MovementSystem());
 		this.entityEngine.addSystem(new BulletSystem());
 		this.entityEngine.addSystem(new ParallaxSystem());
@@ -58,6 +60,9 @@ public class BattleScreen implements Screen {
 		createPlayer();
 		createFriendTeam();
 		createEnemyTeam();
+
+		AudioListener audioListener = new AudioListener(game.audioClips);
+		this.entityEngine.addEntityListener(audioListener);
 
 		this.game.musics.playTurkishMarch();
 	}
@@ -75,6 +80,8 @@ public class BattleScreen implements Screen {
 
 		PlayerComponent playerComponent = this.entityEngine
 				.createComponent(PlayerComponent.class);
+		ShipComponent ship = this.entityEngine
+				.createComponent(ShipComponent.class);
 		TextureComponent texture = this.entityEngine
 				.createComponent(TextureComponent.class);
 		TransformComponent position = this.entityEngine
@@ -120,6 +127,7 @@ public class BattleScreen implements Screen {
 		explosion.pe_explosion.start();
 
 		entity.add(playerComponent);
+		entity.add(ship);
 		entity.add(movement);
 		entity.add(position);
 		entity.add(texture);
@@ -202,6 +210,8 @@ public class BattleScreen implements Screen {
 	private Entity createShip(String textureFile, float velocity, int team) {
 		Entity entity = this.entityEngine.createEntity();
 
+		ShipComponent ship = this.entityEngine
+				.createComponent(ShipComponent.class);
 		TextureComponent texture = this.entityEngine
 				.createComponent(TextureComponent.class);
 		TransformComponent position = this.entityEngine
@@ -251,6 +261,7 @@ public class BattleScreen implements Screen {
 		explosion.pe_explosion.load(Gdx.files.internal("explosion.particle"), Gdx.files.internal(""));
 		explosion.pe_explosion.start();
 
+		entity.add(ship);
 		entity.add(movement);
 		entity.add(position);
 		entity.add(texture);

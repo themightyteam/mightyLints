@@ -13,7 +13,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 
 import eu.mighty.ld37.game.Defaults;
-import eu.mighty.ld37.game.assets.AudioClips;
 import eu.mighty.ld37.game.components.BulletComponent;
 import eu.mighty.ld37.game.components.CollidableComponent;
 import eu.mighty.ld37.game.components.HasWeaponComponent;
@@ -30,12 +29,9 @@ public class UserControlledSystem extends IteratingSystem {
 	private ComponentMapper<HasWeaponComponent> wm = ComponentMapper
 			.getFor(HasWeaponComponent.class);
 
-	private AudioClips audioClips;
-
-	public UserControlledSystem(AudioClips audioClips) {
+	public UserControlledSystem() {
 		super(Family.all(TransformComponent.class, MovementComponent.class,
 				PlayerComponent.class).get());
-		this.audioClips = audioClips;
 	}
 
 	@Override
@@ -57,7 +53,6 @@ public class UserControlledSystem extends IteratingSystem {
 						createMissile(transform.pos, new Vector3(
 								Defaults.missileBasicSpeed, 0, 0));
 					}
-					this.audioClips.playFire();
 				}
 			}
 		}
