@@ -130,7 +130,7 @@ public class FlatMapProcessor extends AbstractMapProcessor {
 
 				pathList.add(pathNode);
 
-				System.out.println("Including node "+zoneId);
+				//System.out.println("Including node "+zoneId);
 			}
 		}		
 
