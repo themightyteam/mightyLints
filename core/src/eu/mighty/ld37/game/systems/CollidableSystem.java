@@ -77,13 +77,23 @@ public class CollidableSystem extends EntitySystem {
 							teami = teamM.get(entityi);
 							teamj = teamM.get(entityj);
 							if (teami.team != teamj.team) {
-								sl.goalFriendTeam();
+								System.out.println("Goal from team " + teami);
+								if (teami.team == Defaults.FRIEND_TEAM) {
+									sl.goalFriendTeam();
+								} else {
+									sl.goalEnemyTeam();
+								}
 							}
 						} else if (goali != null && csj != null) {
 							teami = teamM.get(entityi);
 							teamj = teamM.get(entityj);
 							if (teami.team != teamj.team) {
-								sl.goalEnemyTeam();
+								System.out.println("Goal from team " + teamj);
+								if (teamj.team == Defaults.FRIEND_TEAM) {
+									sl.goalFriendTeam();
+								} else {
+									sl.goalEnemyTeam();
+								}
 							}
 						} else {
 							if (hurti != null) {
