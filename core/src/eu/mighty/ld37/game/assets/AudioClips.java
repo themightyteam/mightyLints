@@ -50,7 +50,6 @@ public class AudioClips {
 	public float calculateVolume(Vector3 pos1, Vector3 pos2) {
 		float dist = pos1.dst2(pos2);
 
-		System.out.println(dist);
 		if (dist < 10000) {
 			return this.VOLUME_HIGH;
 		}
