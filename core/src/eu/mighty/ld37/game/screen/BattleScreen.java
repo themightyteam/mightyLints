@@ -78,7 +78,7 @@ public class BattleScreen implements Screen {
 		Family family = Family.all(DelayedSpawnComponent.class).get();
 		this.entityEngine.addEntityListener(family, audioRespawnListener);
 
-		// this.game.musics.playTurkishMarch();
+		this.game.musics.playTurkishMarch();
 	}
 
 	@Override
