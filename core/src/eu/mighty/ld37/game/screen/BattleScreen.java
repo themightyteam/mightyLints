@@ -14,18 +14,7 @@ import com.badlogic.gdx.math.Vector3;
 
 import eu.mighty.ld37.MightyLD37Game;
 import eu.mighty.ld37.game.Defaults;
-import eu.mighty.ld37.game.components.BackgroundComponent;
-import eu.mighty.ld37.game.components.CollidableComponent;
-import eu.mighty.ld37.game.components.ExhaustComponent;
-import eu.mighty.ld37.game.components.ExplosionComponent;
-import eu.mighty.ld37.game.components.HasWeaponComponent;
-import eu.mighty.ld37.game.components.HealthComponent;
-import eu.mighty.ld37.game.components.MovementComponent;
-import eu.mighty.ld37.game.components.PlayerComponent;
-import eu.mighty.ld37.game.components.ShipComponent;
-import eu.mighty.ld37.game.components.TeamComponent;
-import eu.mighty.ld37.game.components.TextureComponent;
-import eu.mighty.ld37.game.components.TransformComponent;
+import eu.mighty.ld37.game.components.*;
 import eu.mighty.ld37.game.listeners.AudioListener;
 import eu.mighty.ld37.game.systems.BulletSystem;
 import eu.mighty.ld37.game.systems.CollidableSystem;
@@ -92,8 +81,8 @@ public class BattleScreen implements Screen {
 				.createComponent(HasWeaponComponent.class);
 		ExhaustComponent exhaust = this.entityEngine
 				.createComponent(ExhaustComponent.class);
-		ExplosionComponent explosion = this.entityEngine
-				.createComponent(ExplosionComponent.class);
+		HurtComponent hurt = this.entityEngine
+				.createComponent(HurtComponent.class);
 		CollidableComponent collidable = this.entityEngine
 				.createComponent(CollidableComponent.class);
 		TeamComponent teamComponent = this.entityEngine
@@ -122,9 +111,9 @@ public class BattleScreen implements Screen {
 		exhaust.pe_left.start();
 		exhaust.pe_right.start();
 
-		explosion.pe_explosion = new ParticleEffect();
-		explosion.pe_explosion.load(Gdx.files.internal("explosion.particle"), Gdx.files.internal(""));
-		explosion.pe_explosion.start();
+		hurt.pe_hurt = new ParticleEffect();
+		hurt.pe_hurt.load(Gdx.files.internal("hurt.particle"), Gdx.files.internal(""));
+		hurt.pe_hurt.start();
 
 		entity.add(playerComponent);
 		entity.add(ship);
@@ -133,7 +122,7 @@ public class BattleScreen implements Screen {
 		entity.add(texture);
 		entity.add(weaponed);
 		entity.add(exhaust);
-		entity.add(explosion);
+		entity.add(hurt);
 		entity.add(collidable);
 		entity.add(teamComponent);
 
@@ -223,8 +212,8 @@ public class BattleScreen implements Screen {
 				.createComponent(HasWeaponComponent.class);
 		ExhaustComponent exhaust = this.entityEngine
 				.createComponent(ExhaustComponent.class);
-		ExplosionComponent explosion = this.entityEngine
-				.createComponent(ExplosionComponent.class);
+		HurtComponent hurt = this.entityEngine
+				.createComponent(HurtComponent.class);
 		CollidableComponent collidable = this.entityEngine
 				.createComponent(CollidableComponent.class);
 		TeamComponent teamComponent = this.entityEngine
@@ -257,9 +246,9 @@ public class BattleScreen implements Screen {
 		exhaust.pe_left.start();
 		exhaust.pe_right.start();
 
-		explosion.pe_explosion = new ParticleEffect();
-		explosion.pe_explosion.load(Gdx.files.internal("explosion.particle"), Gdx.files.internal(""));
-		explosion.pe_explosion.start();
+		hurt.pe_hurt = new ParticleEffect();
+		hurt.pe_hurt.load(Gdx.files.internal("hurt.particle"), Gdx.files.internal(""));
+		hurt.pe_hurt.start();
 
 		entity.add(ship);
 		entity.add(movement);
@@ -267,7 +256,7 @@ public class BattleScreen implements Screen {
 		entity.add(texture);
 		entity.add(weaponed);
 		entity.add(exhaust);
-		entity.add(explosion);
+		entity.add(hurt);
 		entity.add(collidable);
 		entity.add(teamComponent);
 		entity.add(health);

@@ -15,12 +15,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 
 import eu.mighty.ld37.game.Defaults;
-import eu.mighty.ld37.game.components.ExhaustComponent;
-import eu.mighty.ld37.game.components.ExplosionComponent;
-import eu.mighty.ld37.game.components.MovementComponent;
-import eu.mighty.ld37.game.components.PlayerComponent;
-import eu.mighty.ld37.game.components.TextureComponent;
-import eu.mighty.ld37.game.components.TransformComponent;
+import eu.mighty.ld37.game.components.*;
 
 
 public class RenderingSystem extends IteratingSystem {
@@ -41,6 +36,7 @@ public class RenderingSystem extends IteratingSystem {
     private ComponentMapper<PlayerComponent> playerM;
     private ComponentMapper<ExhaustComponent> exhaustM;
     private ComponentMapper<ExplosionComponent> explosionM;
+    private ComponentMapper<HurtComponent> hurtM;
     private ComponentMapper<MovementComponent> movementM;
 
     public RenderingSystem(SpriteBatch batch) {
@@ -53,6 +49,7 @@ public class RenderingSystem extends IteratingSystem {
         exhaustM = ComponentMapper.getFor(ExhaustComponent.class);
         explosionM = ComponentMapper.getFor(ExplosionComponent.class);
         movementM = ComponentMapper.getFor(MovementComponent.class);
+        hurtM = ComponentMapper.getFor(HurtComponent.class);
 
         renderQueue = new Array<Entity>();
 
@@ -171,22 +168,32 @@ public class RenderingSystem extends IteratingSystem {
             exhaust.pe_right.draw(batch);
 
             ExplosionComponent explosion = explosionM.get(entity);
-            if (explosion == null) continue;
-            if (Gdx.input.isKeyPressed(Keys.X)) {
-                System.out.println("Set explosion to true");
-                explosion.destroyed = true;
-            }
-            explosion.pe_explosion.update(deltaTime);
-            if (explosion.destroyed) {
-                explosion.pe_explosion.getEmitters().first().setPosition(t.pos.x, t.pos.y);
-                if (explosion.pe_explosion.isComplete()) {
-                    explosion.pe_explosion.reset();
+            if (explosion != null) {
+                explosion.pe_explosion.update(deltaTime);
+                if (explosion.destroyed) {
+                    explosion.pe_explosion.getEmitters().first().setPosition(t.pos.x, t.pos.y);
+                    if (explosion.pe_explosion.isComplete()) {
+                        explosion.pe_explosion.reset();
+                    }
+                    explosion.destroyed = false;
                 }
-                explosion.destroyed = false;
+
+                explosion.pe_explosion.draw(batch);
             }
 
-            explosion.pe_explosion.draw(batch);
+            HurtComponent hurt = hurtM.get(entity);
+            if (hurt != null) {
+                hurt.pe_hurt.update(deltaTime);
+                if (hurt.hurted) {
+                    hurt.pe_hurt.getEmitters().first().setPosition(t.pos.x, t.pos.y);
+                    if (hurt.pe_hurt.isComplete()) {
+                        hurt.pe_hurt.reset();
+                    }
+                    hurt.hurted = false;
+                }
 
+                hurt.pe_hurt.draw(batch);
+            }
         }
 
 
