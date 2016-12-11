@@ -271,9 +271,8 @@ public class AIWorld
 						this.nodeList.get(conn.getSinkNodeId())));
 			}
 		}
-	}
-
-
+	}	
+	
 	private double getCost(NodeRepresentations sourceNode, NodeRepresentations sinkNode)
 	{	
 		return Math.min(Math.abs(sourceNode.getX() - sinkNode.getX()) + Math.abs(sourceNode.getY()- sinkNode.getY()),

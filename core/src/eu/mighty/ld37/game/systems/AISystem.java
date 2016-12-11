@@ -13,7 +13,9 @@ import ai.world.AIWorld;
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.systems.IteratingSystem;
+import com.badlogic.gdx.math.Vector2;
 
 import eu.mighty.ld37.game.Defaults;
 import eu.mighty.ld37.game.ai.AIIteration;
@@ -28,9 +30,12 @@ import eu.mighty.ld37.game.components.AIShipComponent;
 import eu.mighty.ld37.game.components.BulletComponent;
 import eu.mighty.ld37.game.components.CanScoreComponent;
 import eu.mighty.ld37.game.components.GoalComponent;
+import eu.mighty.ld37.game.components.HasWeaponComponent;
+import eu.mighty.ld37.game.components.MovementComponent;
 import eu.mighty.ld37.game.components.PlayerComponent;
 import eu.mighty.ld37.game.components.TeamComponent;
 import eu.mighty.ld37.game.components.TransformComponent;
+import eu.mighty.ld37.game.logic.MovementLogic;
 
 public class AISystem extends IteratingSystem {
 
@@ -44,14 +49,18 @@ public class AISystem extends IteratingSystem {
 	private ComponentMapper<PlayerComponent> playerMapper;
 	private ComponentMapper<TeamComponent> teamMapper;
 	private ComponentMapper<TransformComponent> transformMapper;
+	private ComponentMapper<MovementComponent> movementMapper;
 	private ComponentMapper<GoalComponent> goalMapper;
 	private ComponentMapper<CanScoreComponent> scoreMapper;
+	private ComponentMapper<HasWeaponComponent> hasWeaponMapper;
 
 	private int currentAIId = 1;
 
 	private int currentIt;
-	
+
 	AIIteration nextIteration;
+
+	private MovementLogic moveLogic = new MovementLogic();
 
 	public AISystem(){	
 		this(Family.one(AIShipComponent.class, AIBulletComponent.class).one(BulletComponent.class, 
@@ -85,9 +94,12 @@ public class AISystem extends IteratingSystem {
 		this.playerMapper = ComponentMapper.getFor(PlayerComponent.class);
 		this.goalMapper = ComponentMapper.getFor(GoalComponent.class);
 		this.scoreMapper = ComponentMapper.getFor(CanScoreComponent.class);
+		this.hasWeaponMapper = ComponentMapper.getFor(HasWeaponComponent.class);
+		this.movementMapper = ComponentMapper.getFor(MovementComponent.class);
+
 		this.currentIt = 0;
 		this.nextIteration = new AIIteration();
-		
+
 	}
 
 	public void updateShipInformation(AIShipComponent aiShip,
@@ -112,6 +124,9 @@ public class AISystem extends IteratingSystem {
 				if (aiShip.currentPath.getPredConn().size()> 0)
 				{
 					aiShip.idExpectedNode = aiShip.currentPath.getPredConn().get(0).getSinkNodeId();
+					aiShip.nextObjPos = new Vector2(
+							new Float(this.aiWorld.getNodeList().get(aiShip.idExpectedNode).getX()),
+							new Float(this.aiWorld.getNodeList().get(aiShip.idExpectedNode).getY()));
 				}
 				else
 				{
@@ -153,7 +168,7 @@ public class AISystem extends IteratingSystem {
 		ArrayList<Integer> scoreFriendTeamList = new ArrayList<Integer>();
 		ArrayList<Integer> scoreEnemyTeamList = new ArrayList<Integer>();
 		ArrayList<Integer> bulletList = new ArrayList<Integer>();
-	
+
 
 		//processing stuff here (update parameters of ships)
 		for (Integer key : this.entityMap.keySet())
@@ -169,7 +184,7 @@ public class AISystem extends IteratingSystem {
 			CanScoreComponent canScoreComp = this.scoreMapper.get(entity);
 			GoalComponent goalComp = this.goalMapper.get(entity);
 			PlayerComponent playerComp = this.playerMapper.get(entity);
-			
+
 			if (aiShip != null)
 			{
 				this.updateShipInformation(aiShip, transComp);
@@ -231,11 +246,11 @@ public class AISystem extends IteratingSystem {
 		//4) perform the movement
 
 		AStar aStar = new AStar();
-		
+
 		EstimatedCostHeuristic heuristic = 
 				new EuclideanDistanceHeuristic( this.aiWorld.getNodeList());
-	
-		
+
+
 		for (Integer key : this.entityMap.keySet())
 		{
 			//Check if this is ai controlled ship
@@ -256,46 +271,118 @@ public class AISystem extends IteratingSystem {
 					else
 					{
 						//Take a new decision
-					
+
 						DecisionTreeNode decision = aiShip.decisionTree.getRootNode().makeDecision();
-						
+
 						if (decision instanceof ActionFSMNode)
 						{
 							ActionFSMNode targetNode = (ActionFSMNode) decision;
-							
+
 							aiShip.idTargetNode = targetNode.getNextNode();
 						}
-						
-					
+
+
 						//If path is null then recalculate the path
 						if (aiShip.idTargetNode != aiShip.currentRegion && aiShip.idTargetNode != -1)
 						{
-							
-							System.out.println("NEW TARGET NODE "+ aiShip.idTargetNode);
-							System.out.println("NEW CURRENT REGION "+aiShip.currentRegion);
+
+							//System.out.println("NEW TARGET NODE "+ aiShip.idTargetNode);
+							//System.out.println("NEW CURRENT REGION "+aiShip.currentRegion);
 							//System.out.println("CURRENT REGION "+ aiShip.currentRegion);
-								//System.out.println("TARGET NODE "+ aiShip.idTargetNode);
-									
+							//System.out.println("TARGET NODE "+ aiShip.idTargetNode);
+
 							aiShip.currentPath = aStar.pathfindAStar( new PathfindingGraph(this.aiWorld.getGraphMap()), 
 									aiShip.currentRegion, 
 									aiShip.idTargetNode, 
 									heuristic);
-							
+
 							if (aiShip.currentPath.getPredConn().size() > 0)
+							{
 								aiShip.idExpectedNode = aiShip.currentPath.getPredConn().get(0).getSinkNodeId();
+
+								aiShip.nextObjPos = new Vector2(
+										new Float(this.aiWorld.getNodeList().get(aiShip.idExpectedNode).getX()),
+										new Float(this.aiWorld.getNodeList().get(aiShip.idExpectedNode).getY()));
+							}
 						}
-						
-						//A new decision must be performed
-						//TODO
+
 					}
-				}		
+
+					//Perform the movement
+					this.doActualMove(deltaTime,
+							this.entityMap.get(key),
+							aiShip
+							);
+				}	
+
+
+
+
 			}
 		}
 		//Delete the map with the entities in the current slot
 		this.entityMap.clear();
-		
+
 		this.currentIt = this.currentIt + 1;
 	}
+
+	void doActualMove(float deltaTime, 
+			Entity entity,
+			AIShipComponent aiComponent)
+	{
+
+		TransformComponent transComponent = this.transformMapper.get(entity); 
+		float myX = transComponent.pos.x;
+		float myY = transComponent.pos.y;
+
+		float objectiveX = aiComponent.nextObjPos.x;
+		float objectiveY = aiComponent.nextObjPos.y;
+
+		boolean spaceKeyPressed = false; 
+		boolean leftKeyPressed = false;
+		boolean rightKeyPressed = false;
+		boolean upKeyPressed = false;
+		boolean downKeyPressed = false;
+
+		if (myY - aiComponent.nextObjPos.y > 0)
+		{
+			downKeyPressed = true;
+		}
+		else
+		{
+			upKeyPressed = true;
+		}
+
+		//Left distance
+		double leftDistance = 0.0;
+		double rightDistance = 0.0;
+		if (myX > objectiveX)
+		{
+			leftDistance = myX - objectiveX;
+			rightDistance = objectiveX + Defaults.mapWidth - myX;
+		}
+		else
+		{
+			leftDistance = myX + Defaults.mapWidth - objectiveX;
+			rightDistance = objectiveX - myX;
+		}
+
+		if (leftDistance < rightDistance)
+		{
+			leftKeyPressed = true;
+		}
+		else
+		{
+			rightKeyPressed = true;
+		}
+
+		this.moveLogic.doMovement((PooledEngine) this.getEngine(), 
+				entity, deltaTime, 
+				this.movementMapper, this.transformMapper, this.hasWeaponMapper, spaceKeyPressed,
+				leftKeyPressed, rightKeyPressed, 
+				upKeyPressed, downKeyPressed);
+	}
+
 
 	@Override
 	protected void processEntity(Entity entity, float deltaTime) {
@@ -312,11 +399,13 @@ public class AISystem extends IteratingSystem {
 				//Initialize stuff here
 				aiShipComp.idAIObject = this.currentAIId;
 				aiShipComp.idTargetNode = -1;
+				aiShipComp.nextObjPos = new Vector2( new Float(Math.random() * Defaults.mapWidth),
+						new Float(Math.random() * Defaults.mapHeight));
 				//Create the new decision system
-				
+
 				GoalComponent goalShipComp = this.goalMapper.get(entity);
 				CanScoreComponent scoreShipComp = this.scoreMapper.get(entity);
-				
+
 				if (goalShipComp != null)
 				{
 					aiShipComp.decisionTree = new TreeGoalkeeper(aiShipComp.idAIObject,
@@ -324,7 +413,7 @@ public class AISystem extends IteratingSystem {
 							Defaults.DECISION_TIMEOUT);
 				} else if (scoreShipComp != null)
 				{
-					
+
 					//FIXME: change for a more convenient tree
 					aiShipComp.decisionTree = new TreeScorer(aiShipComp.idAIObject,
 							this.nextIteration,
@@ -332,13 +421,13 @@ public class AISystem extends IteratingSystem {
 				}
 				else
 				{
-					
+
 					//FIXME: change for a more convenient tree
 					aiShipComp.decisionTree = new TreeBludgeoner(aiShipComp.idAIObject,
 							this.nextIteration,
 							Defaults.DECISION_TIMEOUT);
 				}		
-				
+
 				this.currentAIId += 1;
 				//System.out.println("XXXXXXXx CURENT AI "+this.currentAIId);
 			}
@@ -356,7 +445,7 @@ public class AISystem extends IteratingSystem {
 				//Initialize stuff here
 				aiBulletComp.idAIObject = this.currentAIId;
 				this.currentAIId += 1;
-				
+
 
 				//System.out.println("XXXXXXXx CURENT AI "+this.currentAIId);
 			}
@@ -364,7 +453,7 @@ public class AISystem extends IteratingSystem {
 			{
 				//System.out.println("I KNOW THIS GUY  "+this.currentAIId);
 			}
-			
+
 			this.entityMap.put(aiBulletComp.idAIObject, entity);	
 		}
 	}

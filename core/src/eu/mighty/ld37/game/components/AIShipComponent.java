@@ -3,6 +3,7 @@ package eu.mighty.ld37.game.components;
 import ai.pathfinding.commons.PredictedPath;
 
 import com.badlogic.ashley.core.Component;
+import com.badlogic.gdx.math.Vector2;
 
 import eu.mighty.ld37.game.ai.decision.tree.BrainTree;
 
@@ -30,6 +31,8 @@ public class AIShipComponent extends AIRelevantComponent implements Component {
 	public int decisionIt;
 	
 	public int targetShipId;
+	
+	public Vector2 nextObjPos;
 	
 	public BrainTree decisionTree;
 	
