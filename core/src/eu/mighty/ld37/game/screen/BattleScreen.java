@@ -51,14 +51,18 @@ public class BattleScreen implements Screen {
 	private PooledEngine entityEngine;
 	private MightyLD37Game game;
 	private ScoreLogic scoreLogic;
+
 	private boolean gamePaused = false;
 	
 	private AudioListener audioListener;
 	private AudioRespawnListener audioRespawnListener;
 
-	public BattleScreen(MightyLD37Game mightyLD37Game) {
+	private int playerRole;
+
+	public BattleScreen(MightyLD37Game mightyLD37Game, int playerRole) {
 		this.game = mightyLD37Game;
 		this.scoreLogic = new ScoreLogic();
+		this.playerRole = playerRole;
 	}
 
 	@Override
@@ -73,12 +77,12 @@ public class BattleScreen implements Screen {
 				this.scoreLogic));
 		this.entityEngine.addSystem(new CollidableSystem(scoreLogic));
 		this.entityEngine.addSystem(new HealthSystem(game.audioClips, scoreLogic));
-		this.entityEngine.addSystem(new RespawnSystem());
+		this.entityEngine.addSystem(new RespawnSystem(playerRole));
 		this.entityEngine.addSystem(new AISystem());
 		this.entityEngine.addSystem(new CanScoreSystem());
 		createBackgrounds();
-		Entity player = createPlayer();
-		createFriendTeam();
+		Entity player = createPlayer(this.playerRole);
+		createFriendTeam(this.playerRole);
 		createEnemyTeam();
 
 		audioListener = new AudioListener(game.audioClips, player);
@@ -120,7 +124,7 @@ public class BattleScreen implements Screen {
 		}
 	}
 
-	private Entity createPlayer() {
+	private Entity createPlayer(int playerRole) {
 		Entity entity = this.entityEngine.createEntity();
 
 		PlayerComponent playerComponent = this.entityEngine
@@ -133,8 +137,20 @@ public class BattleScreen implements Screen {
 				.createComponent(TransformComponent.class);
 		MovementComponent movement = this.entityEngine
 				.createComponent(MovementComponent.class);
-		HasWeaponComponent weaponed = this.entityEngine
-				.createComponent(HasWeaponComponent.class);
+
+		Component roleC = null;
+		switch (playerRole) {
+			case Defaults.ROLE_SCORER:
+				roleC = this.entityEngine.createComponent(CanScoreComponent.class);
+				break;
+			case Defaults.ROLE_GOAL:
+				roleC = this.entityEngine.createComponent(GoalComponent.class);
+				break;
+			default:
+				roleC = this.entityEngine.createComponent(HasWeaponComponent.class);
+
+		}
+
 		ExhaustComponent exhaust = this.entityEngine
 				.createComponent(ExhaustComponent.class);
 		HurtComponent hurt = this.entityEngine
@@ -155,9 +171,20 @@ public class BattleScreen implements Screen {
 		position.pos.set(getRandomPosition());
 		position.rotation = (float) Math.PI / -2;
 
+		String playerTextureFile;
+		switch (playerRole) {
+			case Defaults.ROLE_SCORER:
+				playerTextureFile = Defaults.cyanShip1TextureFile;
+				break;
+			case Defaults.ROLE_GOAL:
+				playerTextureFile = Defaults.cyanGoalShipTextureFile;
+				break;
+			default:
+				playerTextureFile = Defaults.playerTextureFile;
+		}
 
 		Texture tex = new Texture(
-				Gdx.files.internal(Defaults.playerTextureFile));
+				Gdx.files.internal(playerTextureFile));
 		texture.region = new TextureRegion(tex, 0, 0, tex.getWidth() - 1,
 				tex.getHeight() - 1);
 
@@ -184,7 +211,6 @@ public class BattleScreen implements Screen {
 		entity.add(movement);
 		entity.add(position);
 		entity.add(texture);
-		entity.add(weaponed);
 		entity.add(exhaust);
 		entity.add(hurt);
 		entity.add(collidable);
@@ -192,8 +218,7 @@ public class BattleScreen implements Screen {
 		entity.add(aiShipComponent);
 		entity.add(health);
 
-		CanScoreComponent csc = this.entityEngine.createComponent(CanScoreComponent.class);
-		entity.add(csc);
+		if (roleC != null) entity.add(roleC);
 
 		this.entityEngine.addEntity(entity);
 
@@ -353,7 +378,7 @@ public class BattleScreen implements Screen {
 	}
 
 
-	private void createEnemyTeam() {
+	private void createEnemyTeamMinimal() {
 		String textureFile = Defaults.orangeShip1TextureFile;
 		int role = Defaults.ROLE_SHOOTER;
 		this.entityEngine.addEntity(createShip(textureFile, role, Defaults.ENEMY_TEAM));
@@ -368,7 +393,32 @@ public class BattleScreen implements Screen {
 	}
 
 
-	private void createEnemyTeam15() {
+	private void createFriendTeam(int playerRole) {
+		String[] textureFile = { Defaults.orangeShip1TextureFile,
+				Defaults.orangeShip2TextureFile,
+				Defaults.orangeShip3TextureFile,
+				Defaults.orangeShip4TextureFile};
+		int role = Defaults.ROLE_SHOOTER;
+		int numShips = playerRole == Defaults.ROLE_SHOOTER ? 7 : 8;
+		for (int i=0; i<numShips; i++) {
+			this.entityEngine.addEntity(createShip(textureFile[i % 4], role, Defaults.FRIEND_TEAM));
+		}
+
+		role = Defaults.ROLE_SCORER;
+		numShips = playerRole == Defaults.ROLE_SCORER ? 4 : 5;
+		for (int i=0; i<numShips; i++) {
+			this.entityEngine.addEntity(createShip(textureFile[i % 4], role, Defaults.FRIEND_TEAM));
+		}
+
+		String goalTextureFile = Defaults.orangeGoalShipTextureFile;
+		role = Defaults.ROLE_GOAL;
+		numShips = playerRole == Defaults.ROLE_GOAL ? 1 : 2;
+		for (int i=0; i<numShips; i++) {
+			this.entityEngine.addEntity(createShip(goalTextureFile, role, Defaults.FRIEND_TEAM));
+		}
+	}
+
+	private void createEnemyTeam() {
 		String[] textureFile = { Defaults.orangeShip1TextureFile,
 									Defaults.orangeShip2TextureFile,
 									Defaults.orangeShip3TextureFile,

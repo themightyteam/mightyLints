@@ -15,9 +15,11 @@ import eu.mighty.ld37.game.components.*;
 
 public class RespawnSystem extends IteratingSystem {
 	private ComponentMapper<DelayedSpawnComponent> dm = ComponentMapper.getFor(DelayedSpawnComponent.class);
+	private int playerRole;
 
-	public RespawnSystem() {
+	public RespawnSystem(int playerRole) {
 		super(Family.all(DelayedSpawnComponent.class).get());
+		this.playerRole = playerRole;
 	}
 
 	@Override
@@ -33,8 +35,21 @@ public class RespawnSystem extends IteratingSystem {
 				TextureComponent texture = ((PooledEngine)this.getEngine()).createComponent(TextureComponent.class);
 				HealthComponent health = ((PooledEngine)this.getEngine()).createComponent(HealthComponent.class);
 				CollidableComponent collidable = ((PooledEngine)this.getEngine()).createComponent(CollidableComponent.class);
+
+				String playerTextureFile;
+				switch (playerRole) {
+					case Defaults.ROLE_SCORER:
+						playerTextureFile = Defaults.cyanShip1TextureFile;
+						break;
+					case Defaults.ROLE_GOAL:
+						playerTextureFile = Defaults.cyanGoalShipTextureFile;
+						break;
+					default:
+						playerTextureFile = Defaults.playerTextureFile;
+				}
+
 				Texture tex = new Texture(
-						Gdx.files.internal(Defaults.playerTextureFile));
+						Gdx.files.internal(playerTextureFile));
 				texture.region = new TextureRegion(tex, 0, 0, tex.getWidth() - 1,
 						tex.getHeight() - 1);
 				collidable.collidable_zone = new Rectangle(0, 0, tex.getWidth()-1, tex.getHeight()-1);

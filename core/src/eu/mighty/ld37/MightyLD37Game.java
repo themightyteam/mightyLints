@@ -3,6 +3,7 @@ package eu.mighty.ld37;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import eu.mighty.ld37.game.Defaults;
 import eu.mighty.ld37.game.assets.AudioClips;
 import eu.mighty.ld37.game.assets.Musics;
 import eu.mighty.ld37.game.screen.IntroScreen;
