@@ -57,7 +57,7 @@ public final class Defaults {
 	public static final float TIME_TO_REARM_WEAPON_BASIC_MISSILE_SEC = 0.2f;
 	public static final float TIME_OF_LIFE_BASIC_MISSILE_SEC = 1f;
 
-	public static final int NUMBER_OF_MEMBERS_IN_ONE_TEAM = 2;
+	public static final int NUMBER_OF_MEMBERS_IN_ONE_TEAM = 15;
 	public static final int NO_TEAM = 0;
 	public static final int FRIEND_TEAM = 1;
 	public static final int ENEMY_TEAM = 2;
@@ -70,7 +70,7 @@ public final class Defaults {
 
 	public static final float RESPAWN_TIME = 3.0f;
 
-	public static final int DECISION_TIMEOUT = 300;
+	public static final int DECISION_TIMEOUT = 30;
 	public static final int SCORE_DESTROY = 1;
 	public static final int SCORE_GOAL = 50;
 

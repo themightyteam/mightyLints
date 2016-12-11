@@ -5,6 +5,7 @@ import eu.mighty.ld37.game.ai.decision.RandomBranchFSMNodeWithTimeout;
 import eu.mighty.ld37.game.ai.decision.action.ActionGoToClosesTeammateGoal;
 import eu.mighty.ld37.game.ai.decision.action.ActionGoToClosestEnemy;
 import eu.mighty.ld37.game.ai.decision.action.ActionGoToClosestTeammate;
+import eu.mighty.ld37.game.ai.decision.action.ActionGoToRandomEnemy;
 import eu.mighty.ld37.game.ai.decision.action.ActionWanderRandomRegion;
 
 public class TreeBludgeoner extends BrainTree {
@@ -36,8 +37,15 @@ public class TreeBludgeoner extends BrainTree {
 					new ActionGoToClosestEnemy(myId, aiIteration),
 					0.8, 
 					timeOut );
+
+			RandomBranchFSMNodeWithTimeout branch4 = new RandomBranchFSMNodeWithTimeout(	
+					myId, aiIteration,
+					branch3, 
+					new ActionGoToRandomEnemy(myId, aiIteration),
+					0.8, 
+					timeOut );
 			
-			this.rootNode = branch3;
+			this.rootNode = branch4;
 		
 	}
 	
