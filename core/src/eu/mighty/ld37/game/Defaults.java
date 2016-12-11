@@ -51,4 +51,6 @@ public final class Defaults {
 	public static final int FRIEND_TEAM = 1;
 	public static final int ENEMY_TEAM = 2;
 
+	public static final float MINI_MAP_REDUCTION_FACTOR = 20;
+
 }

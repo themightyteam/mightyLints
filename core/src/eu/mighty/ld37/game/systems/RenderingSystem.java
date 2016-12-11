@@ -15,6 +15,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 
 import eu.mighty.ld37.game.Defaults;
+import eu.mighty.ld37.game.assets.MiniMapRenderer;
 import eu.mighty.ld37.game.components.ExhaustComponent;
 import eu.mighty.ld37.game.components.ExplosionComponent;
 import eu.mighty.ld37.game.components.MovementComponent;
@@ -35,6 +36,8 @@ public class RenderingSystem extends IteratingSystem {
     private float camPosX;
     private boolean camPosXLocked;
     private float lastRotation;
+
+	private MiniMapRenderer miniMapRenderer;
 
     private ComponentMapper<TextureComponent> textureM;
     private ComponentMapper<TransformComponent> transformM;
@@ -76,8 +79,7 @@ public class RenderingSystem extends IteratingSystem {
 
         fpsLogger = new FPSLogger();
 
-
-
+		this.miniMapRenderer = new MiniMapRenderer();
     }
 
     @Override
@@ -189,10 +191,10 @@ public class RenderingSystem extends IteratingSystem {
 
         }
 
+		batch.end();
 
+		miniMapRenderer.render(renderQueue);
 
-
-        batch.end();
         renderQueue.clear();
 
         fpsLogger.log();
