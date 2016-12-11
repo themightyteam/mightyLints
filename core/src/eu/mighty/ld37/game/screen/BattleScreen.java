@@ -28,13 +28,7 @@ import eu.mighty.ld37.game.components.TextureComponent;
 import eu.mighty.ld37.game.components.TransformComponent;
 import eu.mighty.ld37.game.listeners.AudioListener;
 import eu.mighty.ld37.game.logic.ScoreLogic;
-import eu.mighty.ld37.game.systems.BulletSystem;
-import eu.mighty.ld37.game.systems.CollidableSystem;
-import eu.mighty.ld37.game.systems.HealthSystem;
-import eu.mighty.ld37.game.systems.MovementSystem;
-import eu.mighty.ld37.game.systems.ParallaxSystem;
-import eu.mighty.ld37.game.systems.RenderingSystem;
-import eu.mighty.ld37.game.systems.UserControlledSystem;
+import eu.mighty.ld37.game.systems.*;
 
 public class BattleScreen implements Screen {
 
@@ -58,6 +52,7 @@ public class BattleScreen implements Screen {
 		this.entityEngine.addSystem(new RenderingSystem(game.batcher));
 		this.entityEngine.addSystem(new CollidableSystem(scoreLogic));
 		this.entityEngine.addSystem(new HealthSystem(game.audioClips));
+		this.entityEngine.addSystem(new RespawnSystem());
 
 		createBackgrounds();
 		createPlayer();
@@ -252,7 +247,7 @@ public class BattleScreen implements Screen {
 		collidable.collidable_zone = new Rectangle(0, 0, tex.getWidth()-1, tex.getHeight()-1);
 
 		teamComponent.team = team;
-		health.health = 1000;
+		health.health = Defaults.HEALTH;
 
 		exhaust.pe_left = new ParticleEffect();
 		exhaust.pe_right = new ParticleEffect();
