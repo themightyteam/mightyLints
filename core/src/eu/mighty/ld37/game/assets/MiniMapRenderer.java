@@ -22,6 +22,9 @@ public class MiniMapRenderer {
 	private float miniMapPosY;
 	private float mapCenterX;
 
+	private Color backgroundColor;
+	private ShapeRenderer shapeRenderer;
+
 	private float MINIMAP_SIZE_NORMAL_SHIP = 2; // the goal ship should be 4
 
 	private ComponentMapper<PlayerComponent> playerM;
@@ -38,6 +41,9 @@ public class MiniMapRenderer {
 		playerM = ComponentMapper.getFor(PlayerComponent.class);
 		teamM = ComponentMapper.getFor(TeamComponent.class);
 		transformM = ComponentMapper.getFor(TransformComponent.class);
+
+		this.backgroundColor = new Color(0f, 0f, 0f, .5f);
+		this.shapeRenderer = new ShapeRenderer();
 	}
 
 	public void render(Array<Entity> renderQueue) {
@@ -49,7 +55,7 @@ public class MiniMapRenderer {
 		paintRectangle(miniMapPosX - MINIMAP_SIZE_NORMAL_SHIP, miniMapPosY,
 				miniMapWidth + MINIMAP_SIZE_NORMAL_SHIP * 2,
 				miniMapHeight,
-				new Color(0f, 0f, 0f, .5f));
+				this.backgroundColor);
 
 		// Get the center of the map (where the player is) and paint the player
 		for (Entity entity : renderQueue) {
@@ -110,7 +116,6 @@ public class MiniMapRenderer {
 
 	private void paintRectangle(float x, float y, float width, float height,
 			Color color) {
-		ShapeRenderer shapeRenderer = new ShapeRenderer();
 		shapeRenderer.begin(ShapeType.Filled);
 		shapeRenderer.setColor(color);
 		shapeRenderer.rect(x, y, width, height);
