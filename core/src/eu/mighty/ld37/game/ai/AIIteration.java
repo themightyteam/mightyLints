@@ -257,6 +257,82 @@ public class AIIteration {
 		return new TargetObject(idMin, nextRegion);
 	}
 	
+
+	public TargetObject obtainRandomEnemySquare(int idObject)
+	{
+		int nextRegion = -1;
+		int idMin = -1;
+		
+		if (this.entityMap.containsKey(idObject))
+		{
+			//Pick the team
+			Entity entity = this.entityMap.get(idObject);
+			
+			TeamComponent teamComp = this.teamMapper.get(entity);
+			
+			ArrayList<Integer> myList;
+			if (teamComp.team == Defaults.FRIEND_TEAM)
+			{
+				myList = this.enemyTeamList;
+			}
+			else
+			{
+				myList = this.friendTeamList;
+			}
+			
+			idMin = (int) Math.floor(Math.random()*myList.size());
+			
+			if (idMin != -1)
+			{
+				
+				Vector3 myPos = this.transformMapper.get(this.entityMap.get(idObject)).pos;		
+				
+				//Obtain the region of this node
+				 nextRegion = this.mapProcessor.obtainCurrentRegion(myPos.x, 
+							myPos.y);
+			}
+			
+		}
+		return new TargetObject(idMin, nextRegion);
+	}
+
+	public TargetObject obtainRandomTeammateSquare(int idObject)
+	{
+		int nextRegion = -1;
+		int idMin = -1;
+		
+		if (this.entityMap.containsKey(idObject))
+		{
+			//Pick the team
+			Entity entity = this.entityMap.get(idObject);
+			
+			TeamComponent teamComp = this.teamMapper.get(entity);
+			
+			ArrayList<Integer> myList;
+			if (teamComp.team == Defaults.FRIEND_TEAM)
+			{
+				myList = this.enemyTeamList;
+			}
+			else
+			{
+				myList = this.friendTeamList;
+			}
+			
+			idMin = (int) Math.floor(Math.random()*myList.size());
+			
+			if (idMin != -1)
+			{
+				
+				Vector3 myPos = this.transformMapper.get(this.entityMap.get(idObject)).pos;		
+				
+				//Obtain the region of this node
+				 nextRegion = this.mapProcessor.obtainCurrentRegion(myPos.x, 
+							myPos.y);
+			}
+			
+		}
+		return new TargetObject(idMin, nextRegion);
+	}
 	
 	int obtainIdClosestDistance(int idObject, List<Integer> othersList)
 	{

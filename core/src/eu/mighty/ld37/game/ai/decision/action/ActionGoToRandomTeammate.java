@@ -4,9 +4,9 @@ import ai.decision.decisiontree.DecisionTreeNode;
 import eu.mighty.ld37.game.ai.AIIteration;
 import eu.mighty.ld37.game.ai.TargetObject;
 
-public class ActionWanderRandomRegion extends ActionFSMNode {
+public class ActionGoToRandomTeammate  extends ActionFSMNode {
 
-	public ActionWanderRandomRegion(int idObject, AIIteration aiIteration) {
+	public ActionGoToRandomTeammate(int idObject, AIIteration aiIteration) {
 		super(idObject, aiIteration);
 
 		this.nextNode = -1;
@@ -16,10 +16,12 @@ public class ActionWanderRandomRegion extends ActionFSMNode {
 	@Override
 	public DecisionTreeNode makeDecision() {
 
-		TargetObject target =  this.aiIteration.obtainRandomRegion(this.idObject); 
+		TargetObject target = this.aiIteration.obtainRandomTeammateSquare(this.idObject);
+		
 		this.nextNode = target.getNextNode();
 		this.nextIdShip = target.getNextIdShip();
 
 		return this;
 	}
+
 }
