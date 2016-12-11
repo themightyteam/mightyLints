@@ -66,26 +66,6 @@ public class HealthSystem extends IteratingSystem {
 
 
 	public void respawnShip(Entity entity) {
-//		if (entity.getComponent(ShipComponent.class) == null) return;
-//		Entity newEntity = new Entity();
-//
-//		ImmutableArray<Component> components = entity.getComponents();
-//		for (Component component : components) {
-//			newEntity.add(component);
-//		}
-//
-//		TransformComponent tc = newEntity.getComponent(TransformComponent.class);
-//		tc.pos.y = 0;
-//
-//		HealthComponent hc = newEntity.getComponent(HealthComponent.class);
-//		hc.health = Defaults.HEALTH;
-//
-//		DelayedSpawnComponent dc = ((PooledEngine)this.getEngine()).createComponent(DelayedSpawnComponent.class);
-//		newEntity.add(dc);
-//
-//		System.out.println("Ship scheduled to respawn");
-//
-//		this.getEngine().addEntity(newEntity);
 
 		Entity newEntity = ((PooledEngine)this.getEngine()).createEntity();
 
@@ -97,8 +77,28 @@ public class HealthSystem extends IteratingSystem {
 				.createComponent(TransformComponent.class);
 		MovementComponent movement = ((PooledEngine)this.getEngine())
 				.createComponent(MovementComponent.class);
-		HasWeaponComponent weaponed = ((PooledEngine)this.getEngine())
-				.createComponent(HasWeaponComponent.class);
+
+		HasWeaponComponent hwc = entity.getComponent(HasWeaponComponent.class);
+		HasWeaponComponent weaponed = null;
+		if (hwc != null) {
+			weaponed = ((PooledEngine) this.getEngine())
+					.createComponent(HasWeaponComponent.class);
+		}
+
+		CanScoreComponent csc = entity.getComponent(CanScoreComponent.class);
+		CanScoreComponent canScore = null;
+		if (csc != null) {
+			canScore = ((PooledEngine) this.getEngine())
+					.createComponent(CanScoreComponent.class);
+		}
+
+		GoalComponent goalc = entity.getComponent(GoalComponent.class);
+		GoalComponent goal = null;
+		if (goalc != null) {
+			goal = ((PooledEngine) this.getEngine())
+					.createComponent(GoalComponent.class);
+		}
+
 		ExhaustComponent exhaust = ((PooledEngine)this.getEngine())
 				.createComponent(ExhaustComponent.class);
 		HurtComponent hurt = ((PooledEngine)this.getEngine())
@@ -109,6 +109,13 @@ public class HealthSystem extends IteratingSystem {
 				.createComponent(TeamComponent.class);
 		HealthComponent health = ((PooledEngine)this.getEngine())
 				.createComponent(HealthComponent.class);
+
+		AIShipComponent aishipc = entity.getComponent(AIShipComponent.class);
+		AIShipComponent aiship = null;
+		if (aishipc != null) {
+			aiship = ((PooledEngine) this.getEngine())
+					.createComponent(AIShipComponent.class);
+		}
 
 
 		position.pos.set((float)Math.random()*Defaults.mapWidth,
@@ -149,12 +156,15 @@ public class HealthSystem extends IteratingSystem {
 		newEntity.add(movement);
 		newEntity.add(position);
 		newEntity.add(texture);
-		newEntity.add(weaponed);
+		if (weaponed != null) newEntity.add(weaponed);
+		if (canScore != null) newEntity.add(canScore);
+		if (goal != null) newEntity.add(goal);
 		newEntity.add(exhaust);
 		newEntity.add(hurt);
 		newEntity.add(collidable);
 		newEntity.add(teamComponent);
 		newEntity.add(health);
+		if (aiship != null) newEntity.add(aiship);
 
 		this.getEngine().addEntity(newEntity);
 
