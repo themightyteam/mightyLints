@@ -85,6 +85,7 @@ public class CollidableSystem extends EntitySystem {
 									} else {
 										sl.goalEnemyTeam();
 									}
+									destroyShip(entityj);
 								}
 							}
 						} else if (goali != null && csj != null) {
@@ -99,6 +100,7 @@ public class CollidableSystem extends EntitySystem {
 									} else {
 										sl.goalEnemyTeam();
 									}
+									destroyShip(entityi);
 								}
 							}
 						} else {
@@ -171,6 +173,18 @@ public class CollidableSystem extends EntitySystem {
 //			}
 		}
 	}
+
+	private void destroyShip(Entity entity) {
+		HurtComponent hurt = entity.getComponent(HurtComponent.class);
+		if (hurt != null) {
+			hurt.hurted = true;
+			HealthComponent health = entity.getComponent(HealthComponent.class);
+			if (health != null) {
+				health.health -= Defaults.HEALTH;
+			}
+		}
+	}
+
 }
 
 
