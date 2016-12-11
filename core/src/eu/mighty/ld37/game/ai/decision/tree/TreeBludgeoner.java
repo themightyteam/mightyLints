@@ -19,7 +19,7 @@ public class TreeBludgeoner extends BrainTree {
 					myId, aiIteration,
 					new ActionGoToClosestTeammate(myId, aiIteration), 
 					new ActionWanderRandomRegion(myId, aiIteration),
-					0.3, 
+					0, 
 					timeOut );
 
 			//Wander to a different region 
@@ -27,14 +27,14 @@ public class TreeBludgeoner extends BrainTree {
 					myId, aiIteration,
 					branch1, 
 					new ActionGoToClosesTeammateGoal(myId, aiIteration),
-					0.3, 
+					1, 
 					timeOut );
 
 			RandomBranchFSMNodeWithTimeout branch3 = new RandomBranchFSMNodeWithTimeout(	
 					myId, aiIteration,
 					branch2, 
 					new ActionGoToClosestEnemy(myId, aiIteration),
-					0.5, 
+					1, 
 					timeOut );
 			
 			this.rootNode = branch3;
