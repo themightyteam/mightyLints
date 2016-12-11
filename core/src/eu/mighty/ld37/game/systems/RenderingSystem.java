@@ -216,8 +216,12 @@ public class RenderingSystem extends IteratingSystem {
     }
 
     private float calculateCamY(float y) {
-        if (y > FRUSTUM_HEIGHT*2) return (float)FRUSTUM_HEIGHT*2;
-        if (y < FRUSTUM_HEIGHT/2) return FRUSTUM_HEIGHT/2;
+        if (y > Defaults.mapHeight - Defaults.windowHeight/2) {
+            return (float)Defaults.mapHeight - Defaults.windowHeight/2;
+        }
+        if (y < Defaults.windowHeight/2) {
+            return Defaults.windowHeight/2;
+        }
         return y;
     }
 
