@@ -281,6 +281,10 @@ public class AISystem extends IteratingSystem {
 							ActionFSMNode targetNode = (ActionFSMNode) decision;
 
 							aiShip.idTargetNode = targetNode.getNextNode();
+							if (aiShip.idTargetNode > Defaults.MAX_NODES)
+							{
+								aiShip.idTargetNode = Defaults.MAX_NODES -1;
+							}
 							aiShip.targetShipId = targetNode.getNextNode();
 						}
 
