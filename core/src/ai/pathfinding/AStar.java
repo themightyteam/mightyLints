@@ -131,13 +131,9 @@ public class AStar
 				else
 				{
 				
-				
-					endNodeRecord = new NodeRecord(nextStepIdNode);
-					
+					endNodeRecord = new NodeRecord(nextStepIdNode);	
 					endNodeFormerEstimationCost = heuristic.obtainEstimatedCost(nextStepIdNode, idEnd);
-					
-					
-		
+						
 				}
 				
 				

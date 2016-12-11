@@ -44,6 +44,8 @@ public final class Defaults {
 	
 	public final static int NUM_HEIGHT_REGIONS = 30;
 	public final static int NUM_WIDTH_REGIONS = 50;
+	public final static int MAX_NODES = 30 * 50;
+	
 	public final static int NUM_WIDTH_ZONES = 5;
 	public final static int NUM_HEIGHT_ZONES = 3;
 
@@ -67,11 +69,14 @@ public final class Defaults {
 
 	public static final float RESPAWN_TIME = 3.0f;
 
+	public static final int DECISION_TIMEOUT = 300;
 	public static final int SCORE_DESTROY = 1;
 	public static final int SCORE_GOAL = 50;
 
 	public static final int ROLE_SHOOTER = 0;
 	public static final int ROLE_SCORER = 1;
 	public static final int ROLE_GOAL = 2;
+
+	public static final float TIME_TO_RESCORE = 3.0f;
 
 }

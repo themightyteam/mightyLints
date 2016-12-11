@@ -16,11 +16,28 @@ import com.badlogic.gdx.math.Vector3;
 
 import eu.mighty.ld37.MightyLD37Game;
 import eu.mighty.ld37.game.Defaults;
-import eu.mighty.ld37.game.components.*;
+import eu.mighty.ld37.game.components.AIShipComponent;
+import eu.mighty.ld37.game.components.BackgroundComponent;
+import eu.mighty.ld37.game.components.CanScoreComponent;
+import eu.mighty.ld37.game.components.CollidableComponent;
+import eu.mighty.ld37.game.components.DelayedSpawnComponent;
+import eu.mighty.ld37.game.components.ExhaustComponent;
+import eu.mighty.ld37.game.components.GoalComponent;
+import eu.mighty.ld37.game.components.HasWeaponComponent;
+import eu.mighty.ld37.game.components.HealthComponent;
+import eu.mighty.ld37.game.components.HurtComponent;
+import eu.mighty.ld37.game.components.MovementComponent;
+import eu.mighty.ld37.game.components.PlayerComponent;
+import eu.mighty.ld37.game.components.ShipComponent;
+import eu.mighty.ld37.game.components.TeamComponent;
+import eu.mighty.ld37.game.components.TextureComponent;
+import eu.mighty.ld37.game.components.TransformComponent;
 import eu.mighty.ld37.game.listeners.AudioListener;
 import eu.mighty.ld37.game.listeners.AudioRespawnListener;
 import eu.mighty.ld37.game.logic.ScoreLogic;
+import eu.mighty.ld37.game.systems.AISystem;
 import eu.mighty.ld37.game.systems.BulletSystem;
+import eu.mighty.ld37.game.systems.CanScoreSystem;
 import eu.mighty.ld37.game.systems.CollidableSystem;
 import eu.mighty.ld37.game.systems.HealthSystem;
 import eu.mighty.ld37.game.systems.MovementSystem;
@@ -53,7 +70,8 @@ public class BattleScreen implements Screen {
 		this.entityEngine.addSystem(new CollidableSystem(scoreLogic));
 		this.entityEngine.addSystem(new HealthSystem(game.audioClips));
 		this.entityEngine.addSystem(new RespawnSystem());
-
+		this.entityEngine.addSystem(new AISystem());
+		this.entityEngine.addSystem(new CanScoreSystem());
 		createBackgrounds();
 		Entity player = createPlayer();
 		createFriendTeam();
@@ -101,6 +119,9 @@ public class BattleScreen implements Screen {
 				.createComponent(CollidableComponent.class);
 		TeamComponent teamComponent = this.entityEngine
 				.createComponent(TeamComponent.class);
+		AIShipComponent aiShipComponent = this.entityEngine
+				.createComponent(AIShipComponent.class);		
+
 		HealthComponent health = this.entityEngine
 				.createComponent(HealthComponent.class);
 
@@ -144,11 +165,11 @@ public class BattleScreen implements Screen {
 		entity.add(hurt);
 		entity.add(collidable);
 		entity.add(teamComponent);
+		entity.add(aiShipComponent);
 		entity.add(health);
 
 		CanScoreComponent csc = this.entityEngine.createComponent(CanScoreComponent.class);
 		entity.add(csc);
-
 
 		this.entityEngine.addEntity(entity);
 
@@ -245,6 +266,10 @@ public class BattleScreen implements Screen {
 				.createComponent(TeamComponent.class);
 		HealthComponent health = this.entityEngine
 				.createComponent(HealthComponent.class);
+
+		AIShipComponent aiShipComponent = this.entityEngine
+				.createComponent(AIShipComponent.class);
+
 		Component roleC = null;
 		switch (role) {
 			case Defaults.ROLE_SCORER:
@@ -290,6 +315,9 @@ public class BattleScreen implements Screen {
 		entity.add(collidable);
 		entity.add(teamComponent);
 		entity.add(health);
+
+		entity.add(aiShipComponent);
+
 		if (roleC != null) {
 			entity.add(roleC);
 		}
