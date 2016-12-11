@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.utils.Array;
 
 import eu.mighty.ld37.game.Defaults;
+import eu.mighty.ld37.game.components.CanScoreComponent;
+import eu.mighty.ld37.game.components.GoalComponent;
 import eu.mighty.ld37.game.components.PlayerComponent;
 import eu.mighty.ld37.game.components.TeamComponent;
 import eu.mighty.ld37.game.components.TransformComponent;
@@ -25,11 +27,19 @@ public class MiniMapRenderer {
 	private Color backgroundColor;
 	private ShapeRenderer shapeRenderer;
 
-	private float MINIMAP_SIZE_NORMAL_SHIP = 2; // the goal ship should be 4
+	private float MINIMAP_SIZE_NORMAL_SHIP = 2;
+	private float MINIMAP_SIZE_GOAL_SHIP = 4;
 
-	private ComponentMapper<PlayerComponent> playerM;
-	private ComponentMapper<TeamComponent> teamM;
-	private ComponentMapper<TransformComponent> transformM;
+	private ComponentMapper<PlayerComponent> pm = ComponentMapper
+			.getFor(PlayerComponent.class);
+	private ComponentMapper<TeamComponent> tem = ComponentMapper
+			.getFor(TeamComponent.class);
+	private ComponentMapper<TransformComponent> trm = ComponentMapper
+			.getFor(TransformComponent.class);
+	private ComponentMapper<CanScoreComponent> csm = ComponentMapper
+			.getFor(CanScoreComponent.class);
+	private ComponentMapper<GoalComponent> gm = ComponentMapper
+			.getFor(GoalComponent.class);
 
 	public MiniMapRenderer() {
 		reductionFactor = Defaults.MINI_MAP_REDUCTION_FACTOR;
@@ -37,10 +47,6 @@ public class MiniMapRenderer {
 		miniMapHeight = Defaults.mapHeight / reductionFactor;
 		miniMapPosX = Defaults.windowWidth / 2 - miniMapWidth / 2;
 		miniMapPosY = Defaults.windowHeight - miniMapHeight;
-
-		playerM = ComponentMapper.getFor(PlayerComponent.class);
-		teamM = ComponentMapper.getFor(TeamComponent.class);
-		transformM = ComponentMapper.getFor(TransformComponent.class);
 
 		this.backgroundColor = new Color(0f, 0f, 0f, .5f);
 		this.shapeRenderer = new ShapeRenderer();
@@ -59,44 +65,64 @@ public class MiniMapRenderer {
 
 		// Get the center of the map (where the player is) and paint the player
 		for (Entity entity : renderQueue) {
-			PlayerComponent pl = playerM.get(entity);
+			PlayerComponent pl = pm.get(entity);
 
 			if (pl == null) {
 				continue;
 			}
 
-			TransformComponent t = transformM.get(entity);
+			TransformComponent t = trm.get(entity);
 			mapCenterX = t.pos.x;
 			
-			paintShipInMinimap(t.pos.x, t.pos.y, t.pos.x,
-					MINIMAP_SIZE_NORMAL_SHIP, MINIMAP_SIZE_NORMAL_SHIP,
+			float size = MINIMAP_SIZE_NORMAL_SHIP;
+
+			GoalComponent g = gm.get(entity);
+			if (g != null) {
+				size = this.MINIMAP_SIZE_GOAL_SHIP;
+			}
+
+			paintShipInMinimap(t.pos.x, t.pos.y, t.pos.x, size, size,
 					Color.BLUE);
 		}
 		
 		// Paint the rest of the ships
 		for (Entity entity : renderQueue) {
-			PlayerComponent pl = playerM.get(entity);
+			PlayerComponent pl = pm.get(entity);
 
 			if (pl != null) {
 				continue;
 			}
 
-			TeamComponent team = teamM.get(entity);
+			TeamComponent team = tem.get(entity);
 			if (team == null) {
 				continue;
 			}
 
-			TransformComponent t = transformM.get(entity);
+			TransformComponent t = trm.get(entity);
+			CanScoreComponent csc = csm.get(entity);
 
 			Color c = Color.GOLD;
 			if (team.team == Defaults.ENEMY_TEAM) {
 				c = Color.ORANGE;
+				if (csm != null) {
+					c = Color.GOLD;
+				}
 			}
 			if (team.team == Defaults.FRIEND_TEAM) {
 				c = Color.CYAN;
+				if (csm == null) {
+					c = Color.NAVY;
+				}
 			}
-			paintShipInMinimap(t.pos.x, t.pos.y, mapCenterX,
-					MINIMAP_SIZE_NORMAL_SHIP, MINIMAP_SIZE_NORMAL_SHIP, c);
+
+			float size = MINIMAP_SIZE_NORMAL_SHIP;
+
+			GoalComponent g = gm.get(entity);
+			if (g != null) {
+				size = this.MINIMAP_SIZE_GOAL_SHIP;
+			}
+
+			paintShipInMinimap(t.pos.x, t.pos.y, mapCenterX, size, size, c);
 		}
 
 		Gdx.gl.glDisable(GL20.GL_BLEND);
