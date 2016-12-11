@@ -159,9 +159,20 @@ public class BattleScreen implements Screen {
 		position.pos.set(getRandomPosition());
 		position.rotation = (float) Math.PI / -2;
 
+		String playerTextureFile;
+		switch (playerRole) {
+			case Defaults.ROLE_SCORER:
+				playerTextureFile = Defaults.cyanShip1TextureFile;
+				break;
+			case Defaults.ROLE_GOAL:
+				playerTextureFile = Defaults.cyanGoalShipTextureFile;
+				break;
+			default:
+				playerTextureFile = Defaults.playerTextureFile;
+		}
 
 		Texture tex = new Texture(
-				Gdx.files.internal(Defaults.playerTextureFile));
+				Gdx.files.internal(playerTextureFile));
 		texture.region = new TextureRegion(tex, 0, 0, tex.getWidth() - 1,
 				tex.getHeight() - 1);
 

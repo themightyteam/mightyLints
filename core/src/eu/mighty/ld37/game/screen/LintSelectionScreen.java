@@ -61,7 +61,7 @@ public class LintSelectionScreen extends DefaultScreen implements Screen {
 
 	private void handleInput() {
 		if (Gdx.input.isKeyPressed(Input.Keys.ANY_KEY)) {
-			this.mightyGame.setScreen(new BattleScreen(this.mightyGame));
+			this.mightyGame.setScreen(new BattleScreen(this.mightyGame, Defaults.ROLE_GOAL));
 		}
 	}
 
