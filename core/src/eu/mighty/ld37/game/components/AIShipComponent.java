@@ -4,10 +4,10 @@ import ai.pathfinding.commons.PredictedPath;
 
 import com.badlogic.ashley.core.Component;
 
-public class AIComponent implements Component {
+public class AIShipComponent extends AIRelevantComponent implements Component {
 	//TODO: put AI information here
 	//Unique id of the shp
-	public int idShip;
+	public int idAIObject;
 	
 	//Indication if the ship has a current active path
 	public boolean hasActivePath;
@@ -18,12 +18,7 @@ public class AIComponent implements Component {
 	//Expected next node in the pathfinding algorithm
 	public int idExpectedNode;
 	
-	//Current zone in the map
-	public int currentZone;
-	
-	//Current region in the map
-	public int currentRegion;
-	
+
 	public PredictedPath currentPath;
 	
 	
