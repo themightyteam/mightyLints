@@ -1,5 +1,6 @@
 package eu.mighty.ld37.game.systems;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.badlogic.ashley.core.ComponentMapper;
@@ -8,8 +9,11 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 
 import eu.mighty.ld37.game.Defaults;
+import eu.mighty.ld37.game.ai.AIIteration;
 import eu.mighty.ld37.game.ai.FlatMapProcessor;
-import eu.mighty.ld37.game.components.AIComponent;
+import eu.mighty.ld37.game.components.AIBulletComponent;
+import eu.mighty.ld37.game.components.AIRelevantComponent;
+import eu.mighty.ld37.game.components.AIShipComponent;
 import eu.mighty.ld37.game.components.BulletComponent;
 import eu.mighty.ld37.game.components.PlayerComponent;
 import eu.mighty.ld37.game.components.TeamComponent;
@@ -19,15 +23,17 @@ public class AISystem extends IteratingSystem {
 
 	HashMap<Integer, Entity> entityMap = new HashMap<Integer, Entity>();
 	FlatMapProcessor mapProcessor;	
-	private ComponentMapper<AIComponent> aiMapper;	
+	private ComponentMapper<AIRelevantComponent> aiMapper;
+	private ComponentMapper<AIBulletComponent> aiBulletMapper;
+	private ComponentMapper<AIShipComponent> aiShipMapper;
 	private ComponentMapper<BulletComponent> bulletMapper;
 	private ComponentMapper<PlayerComponent> playerMapper;
 	private ComponentMapper<TeamComponent> teamMapper;
 	private ComponentMapper<TransformComponent> transformMapper;
 
 	public AISystem(){	
-		this(Family.all(TransformComponent.class).one(BulletComponent.class, TeamComponent.class)
-				.get());
+		this(Family.all(AIRelevantComponent.class).one(BulletComponent.class, 
+				TeamComponent.class).get());
 	}
 
 	public AISystem(Family family) {
@@ -42,11 +48,62 @@ public class AISystem extends IteratingSystem {
 				Defaults.NUM_HEIGHT_REGIONS);
 
 		//Obtain the mappers
-		this.aiMapper = ComponentMapper.getFor(AIComponent.class);
+		this.aiMapper = ComponentMapper.getFor(AIRelevantComponent.class);
+		this.aiBulletMapper = ComponentMapper.getFor(AIBulletComponent.class);
+		this.aiShipMapper = ComponentMapper.getFor(AIShipComponent.class);
 		this.bulletMapper = ComponentMapper.getFor(BulletComponent.class);
 		this.teamMapper = ComponentMapper.getFor(TeamComponent.class);
 		this.transformMapper = ComponentMapper.getFor(TransformComponent.class);
 		this.playerMapper = ComponentMapper.getFor(PlayerComponent.class);
+	}
+
+	public void updateShipInformation(AIShipComponent aiShip,
+			TransformComponent transComp)
+	{
+		int newRegion = this.mapProcessor.obtainCurrentRegion(transComp.pos.x, 
+				transComp.pos.y);
+		int newZone = this.mapProcessor.obtainCurrentZone(transComp.pos.x, 
+				transComp.pos.y);
+
+		//Check if the model has not followed the pathfinding algorithm or if the target region was reached
+		if (aiShip.currentPath != null)
+		{	
+			if ((newRegion != aiShip.currentRegion) && (newRegion != aiShip.idExpectedNode))
+			{
+				//Put the path to null
+				aiShip.currentPath=null;
+			}
+			else if (newRegion == aiShip.idExpectedNode)
+			{
+				aiShip.currentPath.getPredConn().remove(0);
+				if (aiShip.currentPath.getPredConn().size()> 0)
+				{
+					aiShip.idExpectedNode = aiShip.currentPath.getPredConn().get(0).getSinkNodeId();
+				}
+				else
+				{
+					//Goal reached (current path == null)
+					aiShip.currentPath=null;
+				}
+			}
+		}
+
+		//Update the region
+		aiShip.currentRegion = newRegion;
+		aiShip.currentZone = newZone;
+	}
+
+	public void updateBulletInformation(AIBulletComponent aiBullet,
+			TransformComponent transComp)
+	{
+		int newRegion = this.mapProcessor.obtainCurrentRegion(transComp.pos.x, 
+				transComp.pos.y);
+		int newZone = this.mapProcessor.obtainCurrentZone(transComp.pos.x, 
+				transComp.pos.y);
+
+		aiBullet.currentRegion = newRegion;
+		aiBullet.currentZone = newZone;
+
 	}
 
 	@Override
@@ -54,50 +111,48 @@ public class AISystem extends IteratingSystem {
 		// System.out.println("Entering RenderingSystem's update");
 		super.update(deltaTime);
 
-
-		//processing stuff here (update parameters)
+		ArrayList<Integer> friendTeamList = new ArrayList<Integer>();
+		ArrayList<Integer> enemyTeamList = new ArrayList<Integer>();
+		ArrayList<Integer> bulletList = new ArrayList<Integer>();
+	
+		
+		//processing stuff here (update parameters of ships)
 		for (Integer key : this.entityMap.keySet())
 		{
 			//Update zone 
 			Entity entity = this.entityMap.get(key);
 
 			//Update information
-			AIComponent aiComp = this.aiMapper.get(entity);
+			AIShipComponent aiShip = this.aiShipMapper.get(entity);
 			TransformComponent transComp = this.transformMapper.get(entity);
+			AIBulletComponent aiBullet = this.aiBulletMapper.get(entity);
+			TeamComponent teamComp = this.teamMapper.get(entity);
 
-
-
-			int newRegion = this.mapProcessor.obtainCurrentRegion(transComp.pos.x, transComp.pos.y);
-			int newZone = this.mapProcessor.obtainCurrentZone(transComp.pos.x, transComp.pos.y);
-
-			//Check if the model has not followed the pathfinding algorithm or if the target region was reached
-			if (aiComp.currentPath != null)
-			{	
-				if ((newRegion != aiComp.currentRegion) && (newRegion != aiComp.idExpectedNode))
+			if (aiShip != null)
+			{
+				this.updateShipInformation(aiShip, transComp);
+				
+				if (teamComp.team == Defaults.FRIEND_TEAM)
 				{
-					//Put the path to null
-					aiComp.currentPath=null;
+					friendTeamList.add(aiShip.idAIObject);
 				}
-				else if (newRegion == aiComp.idExpectedNode)
+				else
 				{
-					aiComp.currentPath.getPredConn().remove(0);
-					if (aiComp.currentPath.getPredConn().size()> 0)
-					{
-						aiComp.idExpectedNode = aiComp.currentPath.getPredConn().get(0).getSinkNodeId();
-					}
-					else
-					{
-						//Goal reached (current path == null)
-						aiComp.currentPath=null;
-					}
+					enemyTeamList.add(aiShip.idAIObject);
 				}
 			}
 
-
-			//Update the region
-			aiComp.currentRegion = newRegion;
-			aiComp.currentZone = newZone;
+			if (aiBullet != null)
+			{
+				this.updateBulletInformation(aiBullet, transComp);
+				
+				bulletList.add(aiBullet.idAIObject);
+			}	
 		}
+		
+		//Prepare the object for the decision system
+		AIIteration nextIteration = new AIIteration(this.entityMap,
+				friendTeamList,enemyTeamList,bulletList);
 
 		//Perform these steps for artificial players only
 		//TOOD 
@@ -110,14 +165,9 @@ public class AISystem extends IteratingSystem {
 			//Check if this is ai controlled ship
 			if (this.playerMapper.get(this.entityMap.get(key)) == null)
 			{
-				
+				//TODO: If true do magic here!
 			}
 		}
-		
-
-
-
-
 		//Delete the map with the entities in the current slot
 		this.entityMap.clear();
 	}
@@ -126,8 +176,8 @@ public class AISystem extends IteratingSystem {
 	protected void processEntity(Entity entity, float deltaTime) {
 
 		//Obtain the AI component
-		AIComponent aiComp = this.aiMapper.get(entity);
-		this.entityMap.put(aiComp.idShip, entity);
+		AIRelevantComponent aiComp = this.aiMapper.get(entity);
+		this.entityMap.put(aiComp.idAIObject, entity);
 
 	}
 

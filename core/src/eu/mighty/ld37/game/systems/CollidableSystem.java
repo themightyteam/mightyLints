@@ -6,12 +6,7 @@ import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 
-import eu.mighty.ld37.game.components.BulletComponent;
-import eu.mighty.ld37.game.components.CollidableComponent;
-import eu.mighty.ld37.game.components.ExplosionComponent;
-import eu.mighty.ld37.game.components.HealthComponent;
-import eu.mighty.ld37.game.components.TeamComponent;
-import eu.mighty.ld37.game.components.TransformComponent;
+import eu.mighty.ld37.game.components.*;
 
 public class CollidableSystem extends EntitySystem {
 
@@ -34,7 +29,7 @@ public class CollidableSystem extends EntitySystem {
 		Entity entityi, entityj;
 		TransformComponent transformi, transformj;
 		CollidableComponent collidablei, collidablej;
-		ExplosionComponent explosioni, explosionj;
+		HurtComponent hurti, hurtj;
 		TeamComponent teami, teamj;
 		BulletComponent bulleti, bulletj;
 
@@ -52,14 +47,14 @@ public class CollidableSystem extends EntitySystem {
 
 				if ((Math.abs(transformi.pos.x - transformj.pos.x) < collidablei.collidable_zone.getWidth())
 					&&(Math.abs(transformi.pos.y - transformj.pos.y) < collidablei.collidable_zone.getHeight())) {
-					explosioni = entityi.getComponent(ExplosionComponent.class);
-					explosionj = entityj.getComponent(ExplosionComponent.class);
+					hurti = entityi.getComponent(HurtComponent.class);
+					hurtj = entityj.getComponent(HurtComponent.class);
 					bulleti = entityi.getComponent(BulletComponent.class);
 					bulletj = entityj.getComponent(BulletComponent.class);
 					//playeri = entityi.getComponent(PlayerComponent.class);
 					//playerj = entityj.getComponent(PlayerComponent.class);
-					if (explosioni != null) {
-						explosioni.destroyed = true;
+					if (hurti != null) {
+						hurti.hurted = true;
 						teami = entityi.getComponent(TeamComponent.class);
 						if (teami != null) {
 							if (entityi.getComponent(HealthComponent.class) != null) {
@@ -68,8 +63,8 @@ public class CollidableSystem extends EntitySystem {
 							}
 						}
 					}
-					if (explosionj != null) {
-						explosionj.destroyed = true;
+					if (hurtj != null) {
+						hurtj.hurted = true;
 						teamj = entityj.getComponent(TeamComponent.class);
 						if (teamj != null) {
 							if (entityj.getComponent(HealthComponent.class) != null) {

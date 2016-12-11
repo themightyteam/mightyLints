@@ -7,7 +7,6 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -18,10 +17,12 @@ import eu.mighty.ld37.game.Defaults;
 import eu.mighty.ld37.game.assets.MiniMapRenderer;
 import eu.mighty.ld37.game.components.ExhaustComponent;
 import eu.mighty.ld37.game.components.ExplosionComponent;
+import eu.mighty.ld37.game.components.HurtComponent;
 import eu.mighty.ld37.game.components.MovementComponent;
 import eu.mighty.ld37.game.components.PlayerComponent;
 import eu.mighty.ld37.game.components.TextureComponent;
 import eu.mighty.ld37.game.components.TransformComponent;
+
 
 
 public class RenderingSystem extends IteratingSystem {
@@ -44,10 +45,12 @@ public class RenderingSystem extends IteratingSystem {
     private ComponentMapper<PlayerComponent> playerM;
     private ComponentMapper<ExhaustComponent> exhaustM;
     private ComponentMapper<ExplosionComponent> explosionM;
+    private ComponentMapper<HurtComponent> hurtM;
     private ComponentMapper<MovementComponent> movementM;
 
     public RenderingSystem(SpriteBatch batch) {
-        super(Family.all(TransformComponent.class, TextureComponent.class)
+        super(Family.all(TransformComponent.class)
+                .one(ExplosionComponent.class, TextureComponent.class)
                 .get());
 
         textureM = ComponentMapper.getFor(TextureComponent.class);
@@ -56,6 +59,7 @@ public class RenderingSystem extends IteratingSystem {
         exhaustM = ComponentMapper.getFor(ExhaustComponent.class);
         explosionM = ComponentMapper.getFor(ExplosionComponent.class);
         movementM = ComponentMapper.getFor(MovementComponent.class);
+        hurtM = ComponentMapper.getFor(HurtComponent.class);
 
         renderQueue = new Array<Entity>();
 
@@ -111,84 +115,89 @@ public class RenderingSystem extends IteratingSystem {
 
         for (Entity entity : renderQueue) {
             TextureComponent tex = textureM.get(entity);
-
-            if (tex.region == null) {
-                continue;
-            }
-
             TransformComponent t = transformM.get(entity);
 
-            float width = tex.region.getRegionWidth();
-            float height = tex.region.getRegionHeight();
-            float originX = width * 0.5f;
-            float originY = height * 0.5f;
+            if ((tex != null)&&(tex.region != null)) {
 
-            batch.draw(tex.region, t.pos.x - originX, t.pos.y - originY,
-					originX, originY, width, height,
-					t.scale.x,
-					t.scale.y,
-                    MathUtils.radiansToDegrees * t.rotation);
-			// We make the big texture wrap around effect by drawing the same
-			// texture "one screen" on the left and on the right. It can be done
-			// more efficient by calculating before which textures will be seen
-			// in the screen.
-			batch.draw(tex.region, t.pos.x - originX - Defaults.mapWidth,
-					t.pos.y - originY, originX, originY, width, height,
-					t.scale.x, t.scale.y, MathUtils.radiansToDegrees
-							* t.rotation);
-			batch.draw(tex.region, t.pos.x - originX + Defaults.mapWidth,
-					t.pos.y - originY, originX, originY, width, height,
-					t.scale.x, t.scale.y, MathUtils.radiansToDegrees
-							* t.rotation);
+                float width = tex.region.getRegionWidth();
+                float height = tex.region.getRegionHeight();
+                float originX = width * 0.5f;
+                float originY = height * 0.5f;
+
+                batch.draw(tex.region, t.pos.x - originX, t.pos.y - originY,
+                        originX, originY, width, height,
+                        t.scale.x,
+                        t.scale.y,
+                        MathUtils.radiansToDegrees * t.rotation);
+                // We make the big texture wrap around effect by drawing the same
+                // texture "one screen" on the left and on the right. It can be done
+                // more efficient by calculating before which textures will be seen
+                // in the screen.
+                batch.draw(tex.region, t.pos.x - originX - Defaults.mapWidth,
+                        t.pos.y - originY, originX, originY, width, height,
+                        t.scale.x, t.scale.y, MathUtils.radiansToDegrees
+                                * t.rotation);
+                batch.draw(tex.region, t.pos.x - originX + Defaults.mapWidth,
+                        t.pos.y - originY, originX, originY, width, height,
+                        t.scale.x, t.scale.y, MathUtils.radiansToDegrees
+                                * t.rotation);
+            }
 
             ExhaustComponent exhaust = exhaustM.get(entity);
-            if (exhaust == null) continue;
-            //System.out.println("Entering exhaust component");
-            MovementComponent movement = movementM.get(entity);
-            //if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            if (shouldDrawExhaust(movement.accel.x, movement.velocity.x)){
-                if (t.rotation == Defaults.PLAYER_ROTATION_HEADING_LEFT) {
-                    exhaust.pe_left.getEmitters().first().setPosition(t.pos.x + Defaults.PLAYER_WIDTH, t.pos.y);
-                    exhaust.pe_right.getEmitters().first().setPosition(t.pos.x, t.pos.y + Defaults.windowHeight*4);
+            if (exhaust != null) {
+                //System.out.println("Entering exhaust component");
+                MovementComponent movement = movementM.get(entity);
+                //if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+                if (shouldDrawExhaust(movement.accel.x, movement.velocity.x)) {
+                    if (t.rotation == Defaults.PLAYER_ROTATION_HEADING_LEFT) {
+                        exhaust.pe_left.getEmitters().first().setPosition(t.pos.x + Defaults.PLAYER_WIDTH, t.pos.y);
+                        exhaust.pe_right.getEmitters().first().setPosition(t.pos.x, t.pos.y + Defaults.windowHeight * 4);
+                    } else {
+                        exhaust.pe_left.getEmitters().first().setPosition(t.pos.x, t.pos.y + Defaults.windowHeight * 4);
+                        exhaust.pe_right.getEmitters().first().setPosition(t.pos.x - Defaults.PLAYER_WIDTH, t.pos.y);
+                    }
                 } else {
-                    exhaust.pe_left.getEmitters().first().setPosition(t.pos.x, t.pos.y + Defaults.windowHeight*4);
-                    exhaust.pe_right.getEmitters().first().setPosition(t.pos.x - Defaults.PLAYER_WIDTH, t.pos.y);
+                    exhaust.pe_left.getEmitters().first().setPosition(t.pos.x, t.pos.y + Defaults.windowHeight * 4);
+                    exhaust.pe_right.getEmitters().first().setPosition(t.pos.x, t.pos.y + Defaults.windowHeight * 4);
                 }
-            } else {
-                exhaust.pe_left.getEmitters().first().setPosition(t.pos.x, t.pos.y + Defaults.windowHeight*4);
-                exhaust.pe_right.getEmitters().first().setPosition(t.pos.x, t.pos.y + Defaults.windowHeight*4);
+
+                exhaust.pe_left.update(deltaTime);
+                exhaust.pe_right.update(deltaTime);
+
+                if (exhaust.pe_left.isComplete()) {
+                    exhaust.pe_left.reset();
+                }
+                if (exhaust.pe_right.isComplete()) {
+                    exhaust.pe_right.reset();
+                }
+
+                exhaust.pe_left.draw(batch);
+                exhaust.pe_right.draw(batch);
             }
-
-            exhaust.pe_left.update(deltaTime);
-            exhaust.pe_right.update(deltaTime);
-
-            if (exhaust.pe_left.isComplete()) {
-                exhaust.pe_left.reset();
-            }
-            if (exhaust.pe_right.isComplete()) {
-                exhaust.pe_right.reset();
-            }
-
-            exhaust.pe_left.draw(batch);
-            exhaust.pe_right.draw(batch);
-
             ExplosionComponent explosion = explosionM.get(entity);
-            if (explosion == null) continue;
-            if (Gdx.input.isKeyPressed(Keys.X)) {
-                System.out.println("Set explosion to true");
-                explosion.destroyed = true;
-            }
-            explosion.pe_explosion.update(deltaTime);
-            if (explosion.destroyed) {
+            if (explosion != null) {
+                System.out.println("Explossssssssssssssssssssion");
+                explosion.pe_explosion.update(deltaTime);
                 explosion.pe_explosion.getEmitters().first().setPosition(t.pos.x, t.pos.y);
                 if (explosion.pe_explosion.isComplete()) {
-                    explosion.pe_explosion.reset();
+                    this.getEngine().removeEntity(entity);
                 }
-                explosion.destroyed = false;
+                explosion.pe_explosion.draw(batch);
             }
 
-            explosion.pe_explosion.draw(batch);
+            HurtComponent hurt = hurtM.get(entity);
+            if (hurt != null) {
+                hurt.pe_hurt.update(deltaTime);
+                if (hurt.hurted) {
+                    hurt.pe_hurt.getEmitters().first().setPosition(t.pos.x, t.pos.y);
+                    if (hurt.pe_hurt.isComplete()) {
+                        hurt.pe_hurt.reset();
+                    }
+                    hurt.hurted = false;
+                }
 
+                hurt.pe_hurt.draw(batch);
+            }
         }
 
 		batch.end();
