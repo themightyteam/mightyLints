@@ -94,8 +94,10 @@ public class CollidableSystem extends EntitySystem {
 					} else {
 						if (shipi == null) {
 							makeHurtWithMissile(entityj);
+							this.getEngine().removeEntity(entityi);
 						} else {
 							makeHurtWithMissile(entityi);
+							this.getEngine().removeEntity(entityj);
 						}
 					}
 				}

@@ -53,5 +53,5 @@ public final class Defaults {
 
 	public static final float MINI_MAP_REDUCTION_FACTOR = 20;
 
-	public static final int MISSILE_HURT = 10;
+	public static final int MISSILE_HURT = 200;
 }
