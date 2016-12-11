@@ -330,10 +330,30 @@ public class AISystem extends IteratingSystem {
 
 					}
 
+					boolean blockfire = false;
+					
+					if (aiShip.targetShipId != -1)
+					{
+						CanScoreComponent meScore = this.scoreMapper.get(this.entityMap.get(aiShip.idAIObject));
+						
+						if (this.entityMap.containsKey(aiShip.targetShipId))
+						{
+							Entity otherEntity = this.entityMap.get(aiShip.targetShipId);
+							
+							GoalComponent otherGoal = goalMapper.get(otherEntity);
+							
+							if (meScore != null && otherGoal != null)
+							{
+								blockfire = true;
+							}
+						}
+					}
+					
 					//Perform the movement
 					this.doActualMove(deltaTime,
 							this.entityMap.get(key),
-							aiShip
+							aiShip,
+							blockfire
 							);
 				}	
 			}
@@ -346,7 +366,7 @@ public class AISystem extends IteratingSystem {
 
 	void doActualMove(float deltaTime, 
 			Entity entity,
-			AIShipComponent aiComponent)
+			AIShipComponent aiComponent, boolean blockFire)
 	{
 	
 		TransformComponent transComponent = this.transformMapper.get(entity); 
@@ -362,7 +382,10 @@ public class AISystem extends IteratingSystem {
 		boolean upKeyPressed = false;
 		boolean downKeyPressed = false;
 
-		spaceKeyPressed = true;
+		if (blockFire)
+			spaceKeyPressed = false;
+		else
+			spaceKeyPressed = true;
 		
 		
 		if (myY - objectiveY > 0)
