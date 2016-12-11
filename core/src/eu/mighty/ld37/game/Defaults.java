@@ -12,10 +12,19 @@ public final class Defaults {
 	public final static float PLAYER_ROTATION_HEADING_RIGHT = (float) Math.PI / -2;
 	public final static float PLAYER_WIDTH = (float) 32;
 
+	public final static String playerTextureFile = "moteGraphics/cyanTeamShip01.png";
 
-	public final static String playerTextureFile = "starships/1.png";
-	public final static String friendTextureFile = "starships/2.png";
-	public final static String enemyTextureFile = "starships/3.png";
+	public final static String cyanShip1TextureFile = "moteGraphics/cyanTeamShip01.png";
+	public final static String cyanShip2TextureFile = "moteGraphics/cyanTeamShip02.png";
+	public final static String cyanShip3TextureFile = "moteGraphics/cyanTeamShip03.png";
+	public final static String cyanShip4TextureFile = "moteGraphics/cyanTeamShip04.png";
+	public final static String cyanGoalShipTextureFile = "moteGraphics/cyanTeamShipGoal.png";
+
+	public final static String orangeShip1TextureFile = "moteGraphics/orangeTeamShip01.png";
+	public final static String orangeShip2TextureFile = "moteGraphics/orangeTeamShip02.png";
+	public final static String orangeShip3TextureFile = "moteGraphics/orangeTeamShip03.png";
+	public final static String orangeShip4TextureFile = "moteGraphics/orangeTeamShip04.png";
+	public final static String orangeGoalShipTextureFile = "moteGraphics/orangeTeamShipGoal.png";
 
 	public final static String missileBasicTextureFile = "misils/basic.png";
 	public final static int missileBasicSpeed = 500;
@@ -46,7 +55,7 @@ public final class Defaults {
 	public static final float TIME_TO_REARM_WEAPON_BASIC_MISSILE_SEC = 0.2f;
 	public static final float TIME_OF_LIFE_BASIC_MISSILE_SEC = 1f;
 
-	public static final int NUMBER_OF_MEMBERS_IN_ONE_TEAM = 3;
+	public static final int NUMBER_OF_MEMBERS_IN_ONE_TEAM = 7;
 	public static final int NO_TEAM = 0;
 	public static final int FRIEND_TEAM = 1;
 	public static final int ENEMY_TEAM = 2;

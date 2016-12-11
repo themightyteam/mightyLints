@@ -14,7 +14,18 @@ import com.badlogic.gdx.math.Vector3;
 
 import eu.mighty.ld37.MightyLD37Game;
 import eu.mighty.ld37.game.Defaults;
-import eu.mighty.ld37.game.components.*;
+import eu.mighty.ld37.game.components.BackgroundComponent;
+import eu.mighty.ld37.game.components.CollidableComponent;
+import eu.mighty.ld37.game.components.ExhaustComponent;
+import eu.mighty.ld37.game.components.HasWeaponComponent;
+import eu.mighty.ld37.game.components.HealthComponent;
+import eu.mighty.ld37.game.components.HurtComponent;
+import eu.mighty.ld37.game.components.MovementComponent;
+import eu.mighty.ld37.game.components.PlayerComponent;
+import eu.mighty.ld37.game.components.ShipComponent;
+import eu.mighty.ld37.game.components.TeamComponent;
+import eu.mighty.ld37.game.components.TextureComponent;
+import eu.mighty.ld37.game.components.TransformComponent;
 import eu.mighty.ld37.game.listeners.AudioListener;
 import eu.mighty.ld37.game.systems.BulletSystem;
 import eu.mighty.ld37.game.systems.CollidableSystem;
@@ -266,14 +277,40 @@ public class BattleScreen implements Screen {
 
 
 	private void createEnemyTeam() {
+		String textureFile = Defaults.orangeShip1TextureFile;
 		for (int i = 0; i < Defaults.NUMBER_OF_MEMBERS_IN_ONE_TEAM - 1; i++) {
-			this.entityEngine.addEntity(createShip(Defaults.enemyTextureFile, 0.0f, Defaults.ENEMY_TEAM));
+			if (i == 0) {
+				textureFile = Defaults.orangeShip1TextureFile;
+			} else if (i == 1) {
+				textureFile = Defaults.orangeShip2TextureFile;
+			} else if (i == 2) {
+				textureFile = Defaults.orangeShip3TextureFile;
+			} else if (i == 3) {
+				textureFile = Defaults.orangeShip4TextureFile;
+			} else if (i >= 4) {
+				textureFile = Defaults.orangeGoalShipTextureFile;
+			}
+			this.entityEngine.addEntity(createShip(textureFile, 0.0f,
+					Defaults.ENEMY_TEAM));
 		}
 	}
 
 	private void createFriendTeam() {
+		String textureFile = Defaults.cyanShip1TextureFile;
 		for (int i = 0; i < Defaults.NUMBER_OF_MEMBERS_IN_ONE_TEAM - 2; i++ ) {
-			this.entityEngine.addEntity(createShip(Defaults.friendTextureFile, 0.0f, Defaults.FRIEND_TEAM));
+			if (i == 0) {
+				textureFile = Defaults.cyanShip1TextureFile;
+			} else if (i == 1) {
+				textureFile = Defaults.cyanShip2TextureFile;
+			} else if (i == 2) {
+				textureFile = Defaults.cyanShip3TextureFile;
+			} else if (i == 3) {
+				textureFile = Defaults.cyanShip4TextureFile;
+			} else if (i >= 4) {
+				textureFile = Defaults.cyanGoalShipTextureFile;
+			}
+			this.entityEngine.addEntity(createShip(textureFile, 0.0f,
+					Defaults.FRIEND_TEAM));
 		}
 	}
 
