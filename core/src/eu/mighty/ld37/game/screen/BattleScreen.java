@@ -344,6 +344,27 @@ public class BattleScreen implements Screen {
 	}
 
 
+	private void createEnemyTeam15() {
+		String[] textureFile = { Defaults.orangeShip1TextureFile,
+									Defaults.orangeShip2TextureFile,
+									Defaults.orangeShip3TextureFile,
+									Defaults.orangeShip4TextureFile};
+		int role = Defaults.ROLE_SHOOTER;
+		for (int i=0; i<8; i++) {
+			this.entityEngine.addEntity(createShip(textureFile[i % 4], role, Defaults.ENEMY_TEAM));
+		}
+
+		role = Defaults.ROLE_SCORER;
+		for (int i=0; i<5; i++) {
+			this.entityEngine.addEntity(createShip(textureFile[i % 4], role, Defaults.ENEMY_TEAM));
+		}
+
+		String goalTextureFile = Defaults.orangeGoalShipTextureFile;
+		role = Defaults.ROLE_GOAL;
+		this.entityEngine.addEntity(createShip(goalTextureFile, role, Defaults.ENEMY_TEAM));
+		this.entityEngine.addEntity(createShip(goalTextureFile, role, Defaults.ENEMY_TEAM));
+	}
+
 	private void createFriendTeam() {
 		String textureFile = Defaults.cyanShip1TextureFile;
 		int role = Defaults.ROLE_SHOOTER;
