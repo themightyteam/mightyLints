@@ -176,7 +176,6 @@ public class RenderingSystem extends IteratingSystem {
             }
             ExplosionComponent explosion = explosionM.get(entity);
             if (explosion != null) {
-                System.out.println("Explossssssssssssssssssssion");
                 explosion.pe_explosion.update(deltaTime);
                 explosion.pe_explosion.getEmitters().first().setPosition(t.pos.x, t.pos.y);
                 if (explosion.pe_explosion.isComplete()) {

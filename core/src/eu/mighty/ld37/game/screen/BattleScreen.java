@@ -16,6 +16,7 @@ import eu.mighty.ld37.MightyLD37Game;
 import eu.mighty.ld37.game.Defaults;
 import eu.mighty.ld37.game.components.*;
 import eu.mighty.ld37.game.listeners.AudioListener;
+import eu.mighty.ld37.game.logic.ScoreLogic;
 import eu.mighty.ld37.game.systems.BulletSystem;
 import eu.mighty.ld37.game.systems.CollidableSystem;
 import eu.mighty.ld37.game.systems.HealthSystem;
@@ -28,9 +29,11 @@ public class BattleScreen implements Screen {
 
 	private PooledEngine entityEngine;
 	private MightyLD37Game game;
+	private ScoreLogic scoreLogic;
 
 	public BattleScreen(MightyLD37Game mightyLD37Game) {
 		this.game = mightyLD37Game;
+		this.scoreLogic = new ScoreLogic();
 	}
 
 	@Override
@@ -42,7 +45,7 @@ public class BattleScreen implements Screen {
 		this.entityEngine.addSystem(new BulletSystem());
 		this.entityEngine.addSystem(new ParallaxSystem());
 		this.entityEngine.addSystem(new RenderingSystem(game.batcher));
-		this.entityEngine.addSystem(new CollidableSystem());
+		this.entityEngine.addSystem(new CollidableSystem(scoreLogic));
 		this.entityEngine.addSystem(new HealthSystem(game.audioClips));
 
 		createBackgrounds();
