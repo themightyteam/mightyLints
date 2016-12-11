@@ -6,13 +6,10 @@ import com.badlogic.ashley.core.EntityListener;
 import com.badlogic.gdx.math.Vector3;
 
 import eu.mighty.ld37.game.assets.AudioClips;
-import eu.mighty.ld37.game.components.BulletComponent;
 import eu.mighty.ld37.game.components.ShipComponent;
 import eu.mighty.ld37.game.components.TransformComponent;
 
-public class AudioListener implements EntityListener {
-	private ComponentMapper<BulletComponent> bm = ComponentMapper
-			.getFor(BulletComponent.class);
+public class AudioRespawnListener implements EntityListener {
 	private ComponentMapper<ShipComponent> sm = ComponentMapper
 			.getFor(ShipComponent.class);
 	private ComponentMapper<TransformComponent> tm = ComponentMapper
@@ -21,22 +18,13 @@ public class AudioListener implements EntityListener {
 	private AudioClips audioClips;
 	private Entity player;
 
-	public AudioListener(AudioClips audioClips, Entity player) {
+	public AudioRespawnListener(AudioClips audioClips, Entity player) {
 		this.audioClips = audioClips;
 		this.player = player;
 	}
 
 	@Override
 	public void entityAdded(Entity entity) {
-		BulletComponent bc = bm.get(entity);
-		Vector3 lintPos = tm.get(entity).pos;
-		Vector3 playerPos = tm.get(player).pos;
-
-		if (bc != null) {
-			this.audioClips.playFire(this.audioClips.calculateVolume(lintPos,
-					playerPos));
-			return;
-		}
 	}
 
 	@Override
@@ -46,7 +34,7 @@ public class AudioListener implements EntityListener {
 		Vector3 playerPos = tm.get(player).pos;
 
 		if (sc != null) {
-			this.audioClips.playExplosion(this.audioClips.calculateVolume(
+			this.audioClips.playRespawn(this.audioClips.calculateVolume(
 					lintPos, playerPos));
 			return;
 		}
