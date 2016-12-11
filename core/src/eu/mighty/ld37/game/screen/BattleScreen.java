@@ -104,6 +104,8 @@ public class BattleScreen implements Screen {
 				.createComponent(CollidableComponent.class);
 		TeamComponent teamComponent = this.entityEngine
 				.createComponent(TeamComponent.class);
+		HealthComponent health = this.entityEngine
+				.createComponent(HealthComponent.class);
 
 
 //		position.pos.set(Gdx.graphics.getWidth() / 2,
@@ -133,6 +135,8 @@ public class BattleScreen implements Screen {
 		hurt.pe_hurt.load(Gdx.files.internal("hurt.particle"), Gdx.files.internal(""));
 		hurt.pe_hurt.start();
 
+		health.health = Defaults.HEALTH;
+
 		entity.add(playerComponent);
 		entity.add(ship);
 		entity.add(movement);
@@ -143,6 +147,7 @@ public class BattleScreen implements Screen {
 		entity.add(hurt);
 		entity.add(collidable);
 		entity.add(teamComponent);
+		entity.add(health);
 
 		this.entityEngine.addEntity(entity);
 	}
