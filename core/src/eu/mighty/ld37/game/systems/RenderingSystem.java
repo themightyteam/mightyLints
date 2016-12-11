@@ -40,7 +40,8 @@ public class RenderingSystem extends IteratingSystem {
     private ComponentMapper<MovementComponent> movementM;
 
     public RenderingSystem(SpriteBatch batch) {
-        super(Family.all(TransformComponent.class, TextureComponent.class)
+        super(Family.all(TransformComponent.class)
+                .one(ExplosionComponent.class, TextureComponent.class)
                 .get());
 
         textureM = ComponentMapper.getFor(TextureComponent.class);
@@ -106,78 +107,73 @@ public class RenderingSystem extends IteratingSystem {
 
         for (Entity entity : renderQueue) {
             TextureComponent tex = textureM.get(entity);
-
-            if (tex.region == null) {
-                continue;
-            }
-
             TransformComponent t = transformM.get(entity);
 
-            float width = tex.region.getRegionWidth();
-            float height = tex.region.getRegionHeight();
-            float originX = width * 0.5f;
-            float originY = height * 0.5f;
+            if ((tex != null)&&(tex.region != null)) {
 
-            batch.draw(tex.region, t.pos.x - originX, t.pos.y - originY,
-					originX, originY, width, height,
-					t.scale.x,
-					t.scale.y,
-                    MathUtils.radiansToDegrees * t.rotation);
-			// We make the big texture wrap around effect by drawing the same
-			// texture "one screen" on the left and on the right. It can be done
-			// more efficient by calculating before which textures will be seen
-			// in the screen.
-			batch.draw(tex.region, t.pos.x - originX - Defaults.mapWidth,
-					t.pos.y - originY, originX, originY, width, height,
-					t.scale.x, t.scale.y, MathUtils.radiansToDegrees
-							* t.rotation);
-			batch.draw(tex.region, t.pos.x - originX + Defaults.mapWidth,
-					t.pos.y - originY, originX, originY, width, height,
-					t.scale.x, t.scale.y, MathUtils.radiansToDegrees
-							* t.rotation);
+                float width = tex.region.getRegionWidth();
+                float height = tex.region.getRegionHeight();
+                float originX = width * 0.5f;
+                float originY = height * 0.5f;
+
+                batch.draw(tex.region, t.pos.x - originX, t.pos.y - originY,
+                        originX, originY, width, height,
+                        t.scale.x,
+                        t.scale.y,
+                        MathUtils.radiansToDegrees * t.rotation);
+                // We make the big texture wrap around effect by drawing the same
+                // texture "one screen" on the left and on the right. It can be done
+                // more efficient by calculating before which textures will be seen
+                // in the screen.
+                batch.draw(tex.region, t.pos.x - originX - Defaults.mapWidth,
+                        t.pos.y - originY, originX, originY, width, height,
+                        t.scale.x, t.scale.y, MathUtils.radiansToDegrees
+                                * t.rotation);
+                batch.draw(tex.region, t.pos.x - originX + Defaults.mapWidth,
+                        t.pos.y - originY, originX, originY, width, height,
+                        t.scale.x, t.scale.y, MathUtils.radiansToDegrees
+                                * t.rotation);
+            }
 
             ExhaustComponent exhaust = exhaustM.get(entity);
-            if (exhaust == null) continue;
-            //System.out.println("Entering exhaust component");
-            MovementComponent movement = movementM.get(entity);
-            //if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            if (shouldDrawExhaust(movement.accel.x, movement.velocity.x)){
-                if (t.rotation == Defaults.PLAYER_ROTATION_HEADING_LEFT) {
-                    exhaust.pe_left.getEmitters().first().setPosition(t.pos.x + Defaults.PLAYER_WIDTH, t.pos.y);
-                    exhaust.pe_right.getEmitters().first().setPosition(t.pos.x, t.pos.y + Defaults.windowHeight*4);
+            if (exhaust != null) {
+                //System.out.println("Entering exhaust component");
+                MovementComponent movement = movementM.get(entity);
+                //if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+                if (shouldDrawExhaust(movement.accel.x, movement.velocity.x)) {
+                    if (t.rotation == Defaults.PLAYER_ROTATION_HEADING_LEFT) {
+                        exhaust.pe_left.getEmitters().first().setPosition(t.pos.x + Defaults.PLAYER_WIDTH, t.pos.y);
+                        exhaust.pe_right.getEmitters().first().setPosition(t.pos.x, t.pos.y + Defaults.windowHeight * 4);
+                    } else {
+                        exhaust.pe_left.getEmitters().first().setPosition(t.pos.x, t.pos.y + Defaults.windowHeight * 4);
+                        exhaust.pe_right.getEmitters().first().setPosition(t.pos.x - Defaults.PLAYER_WIDTH, t.pos.y);
+                    }
                 } else {
-                    exhaust.pe_left.getEmitters().first().setPosition(t.pos.x, t.pos.y + Defaults.windowHeight*4);
-                    exhaust.pe_right.getEmitters().first().setPosition(t.pos.x - Defaults.PLAYER_WIDTH, t.pos.y);
+                    exhaust.pe_left.getEmitters().first().setPosition(t.pos.x, t.pos.y + Defaults.windowHeight * 4);
+                    exhaust.pe_right.getEmitters().first().setPosition(t.pos.x, t.pos.y + Defaults.windowHeight * 4);
                 }
-            } else {
-                exhaust.pe_left.getEmitters().first().setPosition(t.pos.x, t.pos.y + Defaults.windowHeight*4);
-                exhaust.pe_right.getEmitters().first().setPosition(t.pos.x, t.pos.y + Defaults.windowHeight*4);
+
+                exhaust.pe_left.update(deltaTime);
+                exhaust.pe_right.update(deltaTime);
+
+                if (exhaust.pe_left.isComplete()) {
+                    exhaust.pe_left.reset();
+                }
+                if (exhaust.pe_right.isComplete()) {
+                    exhaust.pe_right.reset();
+                }
+
+                exhaust.pe_left.draw(batch);
+                exhaust.pe_right.draw(batch);
             }
-
-            exhaust.pe_left.update(deltaTime);
-            exhaust.pe_right.update(deltaTime);
-
-            if (exhaust.pe_left.isComplete()) {
-                exhaust.pe_left.reset();
-            }
-            if (exhaust.pe_right.isComplete()) {
-                exhaust.pe_right.reset();
-            }
-
-            exhaust.pe_left.draw(batch);
-            exhaust.pe_right.draw(batch);
-
             ExplosionComponent explosion = explosionM.get(entity);
             if (explosion != null) {
+                System.out.println("Explossssssssssssssssssssion");
                 explosion.pe_explosion.update(deltaTime);
-                if (explosion.destroyed) {
-                    explosion.pe_explosion.getEmitters().first().setPosition(t.pos.x, t.pos.y);
-                    if (explosion.pe_explosion.isComplete()) {
-                        explosion.pe_explosion.reset();
-                    }
-                    explosion.destroyed = false;
+                explosion.pe_explosion.getEmitters().first().setPosition(t.pos.x, t.pos.y);
+                if (explosion.pe_explosion.isComplete()) {
+                    this.getEngine().removeEntity(entity);
                 }
-
                 explosion.pe_explosion.draw(batch);
             }
 
