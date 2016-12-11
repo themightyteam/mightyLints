@@ -30,6 +30,7 @@ import eu.mighty.ld37.game.components.TeamComponent;
 import eu.mighty.ld37.game.components.TextureComponent;
 import eu.mighty.ld37.game.components.TransformComponent;
 import eu.mighty.ld37.game.listeners.AudioListener;
+import eu.mighty.ld37.game.listeners.AudioRespawnListener;
 import eu.mighty.ld37.game.logic.ScoreLogic;
 import eu.mighty.ld37.game.systems.AISystem;
 import eu.mighty.ld37.game.systems.BulletSystem;
@@ -68,14 +69,17 @@ public class BattleScreen implements Screen {
 		this.entityEngine.addSystem(new AISystem());
 		
 		createBackgrounds();
-		createPlayer();
+		Entity player = createPlayer();
 		createFriendTeam();
 		createEnemyTeam();
 
-		AudioListener audioListener = new AudioListener(game.audioClips);
+		AudioListener audioListener = new AudioListener(game.audioClips, player);
 		this.entityEngine.addEntityListener(audioListener);
+
+		AudioRespawnListener audioRespawnListener = new AudioRespawnListener(
+				game.audioClips, player);
 		Family family = Family.all(DelayedSpawnComponent.class).get();
-		this.entityEngine.addEntityListener(family, audioListener);
+		this.entityEngine.addEntityListener(family, audioRespawnListener);
 
 		this.game.musics.playTurkishMarch();
 	}
@@ -88,7 +92,7 @@ public class BattleScreen implements Screen {
 		this.entityEngine.update(delta);
 	}
 
-	private void createPlayer() {
+	private Entity createPlayer() {
 		Entity entity = this.entityEngine.createEntity();
 
 		PlayerComponent playerComponent = this.entityEngine
@@ -160,6 +164,8 @@ public class BattleScreen implements Screen {
 		entity.add(aiShipComponent);
 		entity.add(health);
 		this.entityEngine.addEntity(entity);
+
+		return entity;
 	}
 
 	private void createBackgrounds() {
