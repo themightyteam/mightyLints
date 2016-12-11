@@ -8,6 +8,7 @@ import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
@@ -15,6 +16,7 @@ import com.badlogic.gdx.math.Vector3;
 import eu.mighty.ld37.game.Defaults;
 import eu.mighty.ld37.game.components.BulletComponent;
 import eu.mighty.ld37.game.components.CollidableComponent;
+import eu.mighty.ld37.game.components.ExhaustComponent;
 import eu.mighty.ld37.game.components.HasWeaponComponent;
 import eu.mighty.ld37.game.components.MovementComponent;
 import eu.mighty.ld37.game.components.PlayerComponent;
@@ -48,10 +50,12 @@ public class UserControlledSystem extends IteratingSystem {
 					weaponed.timeToRearm = Defaults.TIME_TO_REARM_WEAPON_BASIC_MISSILE_SEC;
 					if (transform.rotation == Defaults.PLAYER_ROTATION_HEADING_LEFT) {
 						createMissile(transform.pos, new Vector3(
-								Defaults.missileBasicSpeed * -1, 0, 0));
+								Defaults.missileBasicSpeed * -1, 0, 0),
+								transform.rotation);
 					} else {
 						createMissile(transform.pos, new Vector3(
-								Defaults.missileBasicSpeed, 0, 0));
+								Defaults.missileBasicSpeed, 0, 0),
+								transform.rotation);
 					}
 				}
 			}
@@ -97,7 +101,7 @@ public class UserControlledSystem extends IteratingSystem {
 			movement.velocity.x = Defaults.MAX_SPEED_X * -1;
 	}
 
-	private void createMissile(Vector3 pos, Vector3 velocity) {
+	private void createMissile(Vector3 pos, Vector3 velocity, float rotation) {
 		Entity entity = new Entity();
 
 		BulletComponent missileComponent = ((PooledEngine) this.getEngine())
@@ -110,6 +114,8 @@ public class UserControlledSystem extends IteratingSystem {
 				.createComponent(MovementComponent.class);
 		CollidableComponent collidable = ((PooledEngine) this.getEngine())
 				.createComponent(CollidableComponent.class);
+		ExhaustComponent exhaust = ((PooledEngine) this.getEngine())
+				.createComponent(ExhaustComponent.class);
 
 
 		Texture tex = new Texture(
@@ -120,6 +126,7 @@ public class UserControlledSystem extends IteratingSystem {
 		collidable.collidable_zone = new Rectangle(0, 0, tex.getWidth()-1, tex.getHeight()-1);
 
 		position.pos.set(pos);
+		position.rotation = rotation;
 
 		if (velocity.x > 0) {
 			position.pos.x += Defaults.PLAYER_WIDTH;
@@ -127,6 +134,14 @@ public class UserControlledSystem extends IteratingSystem {
 			position.pos.x -= Defaults.PLAYER_WIDTH;
 		}
 
+		exhaust.pe_left = new ParticleEffect();
+		exhaust.pe_right = new ParticleEffect();
+		exhaust.pe_left.load(Gdx.files.internal("exhaust_left.particle"),
+				Gdx.files.internal(""));
+		exhaust.pe_right.load(Gdx.files.internal("exhaust_right.particle"),
+				Gdx.files.internal(""));
+		exhaust.pe_left.start();
+		exhaust.pe_right.start();
 
 		movement.velocity.set(velocity.x, velocity.y);
 
@@ -135,6 +150,7 @@ public class UserControlledSystem extends IteratingSystem {
 		entity.add(position);
 		entity.add(texture);
 		entity.add(collidable);
+		entity.add(exhaust);
 
 		this.getEngine().addEntity(entity);
 	}
