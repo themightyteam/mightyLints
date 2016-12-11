@@ -25,6 +25,7 @@ public class LoseScreen extends DefaultScreen implements Screen {
 
 	public LoseScreen(MightyLD37Game game) {
 		super(game);
+		System.out.println("You Win!");
 
 		this.cam = new OrthographicCamera();
 		this.sv = new StretchViewport(Gdx.graphics.getWidth(),

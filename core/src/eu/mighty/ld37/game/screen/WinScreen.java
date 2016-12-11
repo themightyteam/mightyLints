@@ -25,6 +25,7 @@ public class WinScreen extends DefaultScreen implements Screen {
 
 	public WinScreen(MightyLD37Game game) {
 		super(game);
+		System.out.println("You Win!");
 
 		this.cam = new OrthographicCamera();
 		this.sv = new StretchViewport(Gdx.graphics.getWidth(),

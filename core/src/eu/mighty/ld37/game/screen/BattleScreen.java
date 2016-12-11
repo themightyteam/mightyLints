@@ -94,6 +94,20 @@ public class BattleScreen implements Screen {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		this.entityEngine.update(delta);
+
+		stateUpdate();
+	}
+
+	private void stateUpdate() {
+		if (this.scoreLogic.getPointsFriendTeam() >= Defaults.POINTS_TO_WIN) {
+			this.dispose();
+			this.game.setScreen(new WinScreen(this.game));
+		}
+
+		if (this.scoreLogic.getPointsEnemyTeam() >= Defaults.POINTS_TO_WIN) {
+			this.dispose();
+			this.game.setScreen(new WinScreen(this.game));
+		}
 	}
 
 	private Entity createPlayer() {
@@ -448,7 +462,6 @@ public class BattleScreen implements Screen {
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
 
 	}
 
