@@ -5,5 +5,4 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 
 public class ExplosionComponent implements Component {
 	public ParticleEffect pe_explosion = null;
-	public boolean destroyed = false;
 }

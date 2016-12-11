@@ -6,13 +6,17 @@ import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 
+import eu.mighty.ld37.game.Defaults;
 import eu.mighty.ld37.game.components.*;
+import eu.mighty.ld37.game.logic.ScoreLogic;
 
 public class CollidableSystem extends EntitySystem {
 
 	private ImmutableArray<Entity> entities;
+	private ScoreLogic sl;
 
-	public CollidableSystem() {
+	public CollidableSystem(ScoreLogic sl) {
+		this.sl = sl;
 	}
 
 	@Override
@@ -32,6 +36,9 @@ public class CollidableSystem extends EntitySystem {
 		HurtComponent hurti, hurtj;
 		TeamComponent teami, teamj;
 		BulletComponent bulleti, bulletj;
+		ShipComponent shipi, shipj;
+		CanScoreComponent csi, csj;
+		GoalComponent goali, goalj;
 
 		for (int i = 0; i < entities.size(); i++) {
 
@@ -51,31 +58,69 @@ public class CollidableSystem extends EntitySystem {
 					hurtj = entityj.getComponent(HurtComponent.class);
 					bulleti = entityi.getComponent(BulletComponent.class);
 					bulletj = entityj.getComponent(BulletComponent.class);
-					//playeri = entityi.getComponent(PlayerComponent.class);
-					//playerj = entityj.getComponent(PlayerComponent.class);
-					if (hurti != null) {
-						hurti.hurted = true;
-						teami = entityi.getComponent(TeamComponent.class);
-						if (teami != null) {
-							if (entityi.getComponent(HealthComponent.class) != null) {
-								entityi.getComponent(HealthComponent.class).health -= 10;
-								System.out.println("Daño en equipo: " + teami.team);
+					shipi = entityi.getComponent(ShipComponent.class);
+					shipj = entityj.getComponent(ShipComponent.class);
+					csi = entityi.getComponent(CanScoreComponent.class);
+					csj = entityj.getComponent(CanScoreComponent.class);
+					goali = entityi.getComponent(GoalComponent.class);
+					goalj = entityj.getComponent(GoalComponent.class);
+					if (shipi != null && shipj != null) {
+						if (csi != null && goalj != null) {
+							sl.goalFriendTeam();
+						} else if (goali != null && csj != null) {
+							sl.goalEnemyTeam();
+						} else {
+							if (hurti != null) {
+								hurti.hurted = true;
+								teami = entityi.getComponent(TeamComponent.class);
+								if (teami != null) {
+									if (entityi.getComponent(HealthComponent.class) != null) {
+										entityi.getComponent(HealthComponent.class).health -= 10;
+										System.out.println("Hurt in team: " + teami.team);
+									}
+								}
+							}
+							if (hurtj != null) {
+								hurtj.hurted = true;
+								teamj = entityj.getComponent(TeamComponent.class);
+								if (teamj != null) {
+									if (entityj.getComponent(HealthComponent.class) != null) {
+										entityj.getComponent(HealthComponent.class).health -= 10;
+										System.out.println("Hurt in team: " + teamj.team);
+									}
+								}
 							}
 						}
-					}
-					if (hurtj != null) {
-						hurtj.hurted = true;
-						teamj = entityj.getComponent(TeamComponent.class);
-						if (teamj != null) {
-							if (entityj.getComponent(HealthComponent.class) != null) {
-								entityj.getComponent(HealthComponent.class).health -= 10;
-								System.out.println("Daño en equipo: " + teamj.team);
-							}
+					} else {
+						if (shipi == null) {
+							makeHurtWithMissile(entityj);
+							this.getEngine().removeEntity(entityi);
+						} else {
+							makeHurtWithMissile(entityi);
+							this.getEngine().removeEntity(entityj);
 						}
 					}
 				}
 			}
 		}
 	}
+
+
+	private void makeHurtWithMissile(Entity entity) {
+		HurtComponent hurt = entity.getComponent(HurtComponent.class);
+		if (hurt != null) {
+			hurt.hurted = true;
+			TeamComponent team = entity.getComponent(TeamComponent.class);
+			if (team != null) {
+				HealthComponent health = entity.getComponent(HealthComponent.class);
+				if (health != null) {
+					health.health -= Defaults.MISSILE_HURT;
+					System.out.println("Hurt in team " + team.team + " by missile");
+				}
+			}
+		}
+	}
+
 }
+
 

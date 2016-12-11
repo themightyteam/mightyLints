@@ -9,6 +9,7 @@ import com.badlogic.ashley.core.Component;
  * @author hmightypirate
  *
  */
+
 public class CanScoreComponent implements Component{
 
 }

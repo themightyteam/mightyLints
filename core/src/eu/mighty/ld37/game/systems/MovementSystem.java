@@ -37,7 +37,7 @@ public class MovementSystem extends IteratingSystem {
 		}
 
 		// Y limits
-		if (transform.pos.y > FRUSTUM_HEIGHT*2.5) transform.pos.y = FRUSTUM_HEIGHT*2.5f;
+		if (transform.pos.y > Defaults.mapHeight) transform.pos.y = Defaults.mapHeight;
 		if (transform.pos.y < 0) transform.pos.y = 0;
 
 		/*

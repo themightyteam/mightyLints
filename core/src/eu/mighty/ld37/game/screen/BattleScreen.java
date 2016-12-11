@@ -14,23 +14,31 @@ import com.badlogic.gdx.math.Vector3;
 
 import eu.mighty.ld37.MightyLD37Game;
 import eu.mighty.ld37.game.Defaults;
-import eu.mighty.ld37.game.components.*;
+import eu.mighty.ld37.game.components.BackgroundComponent;
+import eu.mighty.ld37.game.components.CollidableComponent;
+import eu.mighty.ld37.game.components.ExhaustComponent;
+import eu.mighty.ld37.game.components.HasWeaponComponent;
+import eu.mighty.ld37.game.components.HealthComponent;
+import eu.mighty.ld37.game.components.HurtComponent;
+import eu.mighty.ld37.game.components.MovementComponent;
+import eu.mighty.ld37.game.components.PlayerComponent;
+import eu.mighty.ld37.game.components.ShipComponent;
+import eu.mighty.ld37.game.components.TeamComponent;
+import eu.mighty.ld37.game.components.TextureComponent;
+import eu.mighty.ld37.game.components.TransformComponent;
 import eu.mighty.ld37.game.listeners.AudioListener;
-import eu.mighty.ld37.game.systems.BulletSystem;
-import eu.mighty.ld37.game.systems.CollidableSystem;
-import eu.mighty.ld37.game.systems.HealthSystem;
-import eu.mighty.ld37.game.systems.MovementSystem;
-import eu.mighty.ld37.game.systems.ParallaxSystem;
-import eu.mighty.ld37.game.systems.RenderingSystem;
-import eu.mighty.ld37.game.systems.UserControlledSystem;
+import eu.mighty.ld37.game.logic.ScoreLogic;
+import eu.mighty.ld37.game.systems.*;
 
 public class BattleScreen implements Screen {
 
 	private PooledEngine entityEngine;
 	private MightyLD37Game game;
+	private ScoreLogic scoreLogic;
 
 	public BattleScreen(MightyLD37Game mightyLD37Game) {
 		this.game = mightyLD37Game;
+		this.scoreLogic = new ScoreLogic();
 	}
 
 	@Override
@@ -42,8 +50,9 @@ public class BattleScreen implements Screen {
 		this.entityEngine.addSystem(new BulletSystem());
 		this.entityEngine.addSystem(new ParallaxSystem());
 		this.entityEngine.addSystem(new RenderingSystem(game.batcher));
-		this.entityEngine.addSystem(new CollidableSystem());
+		this.entityEngine.addSystem(new CollidableSystem(scoreLogic));
 		this.entityEngine.addSystem(new HealthSystem(game.audioClips));
+		this.entityEngine.addSystem(new RespawnSystem());
 
 		createBackgrounds();
 		createPlayer();
@@ -89,8 +98,9 @@ public class BattleScreen implements Screen {
 				.createComponent(TeamComponent.class);
 
 
-		position.pos.set(Gdx.graphics.getWidth() / 2,
-				Gdx.graphics.getHeight() / 2, 0.0f);
+//		position.pos.set(Gdx.graphics.getWidth() / 2,
+//				Gdx.graphics.getHeight() / 2, 0.0f);
+		position.pos.set(getRandomPosition());
 		position.rotation = (float) Math.PI / -2;
 
 
@@ -189,8 +199,8 @@ public class BattleScreen implements Screen {
 
 	private Vector3 getRandomPosition() {
 		Vector3 position = new Vector3();
-		position.x = (float)Math.random() * Gdx.graphics.getWidth();
-		position.y = (float)Math.random() * Gdx.graphics.getHeight();
+		position.x = (float)Math.random() * Defaults.mapWidth;
+		position.y = (float)Math.random() * Defaults.mapHeight;
 		position.z = 0.0f;
 		return position;
 	}
@@ -237,7 +247,7 @@ public class BattleScreen implements Screen {
 		collidable.collidable_zone = new Rectangle(0, 0, tex.getWidth()-1, tex.getHeight()-1);
 
 		teamComponent.team = team;
-		health.health = 1000;
+		health.health = Defaults.HEALTH;
 
 		exhaust.pe_left = new ParticleEffect();
 		exhaust.pe_right = new ParticleEffect();
@@ -266,14 +276,40 @@ public class BattleScreen implements Screen {
 
 
 	private void createEnemyTeam() {
+		String textureFile = Defaults.orangeShip1TextureFile;
 		for (int i = 0; i < Defaults.NUMBER_OF_MEMBERS_IN_ONE_TEAM - 1; i++) {
-			this.entityEngine.addEntity(createShip(Defaults.enemyTextureFile, 0.0f, Defaults.ENEMY_TEAM));
+			if (i == 0) {
+				textureFile = Defaults.orangeShip1TextureFile;
+			} else if (i == 1) {
+				textureFile = Defaults.orangeShip2TextureFile;
+			} else if (i == 2) {
+				textureFile = Defaults.orangeShip3TextureFile;
+			} else if (i == 3) {
+				textureFile = Defaults.orangeShip4TextureFile;
+			} else if (i >= 4) {
+				textureFile = Defaults.orangeGoalShipTextureFile;
+			}
+			this.entityEngine.addEntity(createShip(textureFile, 0.0f,
+					Defaults.ENEMY_TEAM));
 		}
 	}
 
 	private void createFriendTeam() {
+		String textureFile = Defaults.cyanShip1TextureFile;
 		for (int i = 0; i < Defaults.NUMBER_OF_MEMBERS_IN_ONE_TEAM - 2; i++ ) {
-			this.entityEngine.addEntity(createShip(Defaults.friendTextureFile, 0.0f, Defaults.FRIEND_TEAM));
+			if (i == 0) {
+				textureFile = Defaults.cyanShip1TextureFile;
+			} else if (i == 1) {
+				textureFile = Defaults.cyanShip2TextureFile;
+			} else if (i == 2) {
+				textureFile = Defaults.cyanShip3TextureFile;
+			} else if (i == 3) {
+				textureFile = Defaults.cyanShip4TextureFile;
+			} else if (i >= 4) {
+				textureFile = Defaults.cyanGoalShipTextureFile;
+			}
+			this.entityEngine.addEntity(createShip(textureFile, 0.0f,
+					Defaults.FRIEND_TEAM));
 		}
 	}
 
