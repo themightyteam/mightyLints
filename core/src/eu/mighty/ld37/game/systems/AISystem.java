@@ -398,11 +398,6 @@ public class AISystem extends IteratingSystem {
 	
 		}
 		
-		System.out.println("myX "+ myX);
-		System.out.println("myY "+ myY);
-		System.out.println("X "+objectiveX);
-		System.out.println("Y "+ objectiveY);
-		
 		this.moveLogic.doMovement((PooledEngine) this.getEngine(), 
 				entity, deltaTime, 
 				this.movementMapper, this.transformMapper, this.hasWeaponMapper, spaceKeyPressed,
