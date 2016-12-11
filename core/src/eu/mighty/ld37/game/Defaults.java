@@ -82,5 +82,5 @@ public final class Defaults {
 
 	public static final int SCREEN_INITIAL_WAIT_TIME = 30;
 
-	public static final int POINTS_TO_WIN = 100;
+	public static final int POINTS_TO_WIN = 500;
 }
