@@ -12,7 +12,7 @@ public class AudioClips {
 	private static Sound respawnPlayer;
 	private static Sound tooMighty;
 
-	public static float VOLUME_HIGH = 1;
+	public static float VOLUME_HIGH = 0.8f;
 	public static float VOLUME_MEDIUM = 0.5f;
 	public static float VOLUME_LOW = 0.1f;
 
@@ -50,12 +50,12 @@ public class AudioClips {
 	public float calculateVolume(Vector3 pos1, Vector3 pos2) {
 		float dist = pos1.dst2(pos2);
 
-		// System.out.println(dist);
-		if (dist < 4000) {
+		System.out.println(dist);
+		if (dist < 10000) {
 			return this.VOLUME_HIGH;
 		}
 
-		if (dist < 10000) {
+		if (dist < 100000) {
 			return this.VOLUME_MEDIUM;
 		}
 		return this.VOLUME_LOW;
