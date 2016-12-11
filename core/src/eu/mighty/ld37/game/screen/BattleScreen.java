@@ -103,8 +103,9 @@ public class BattleScreen implements Screen {
 				.createComponent(TeamComponent.class);
 
 
-		position.pos.set(Gdx.graphics.getWidth() / 2,
-				Gdx.graphics.getHeight() / 2, 0.0f);
+//		position.pos.set(Gdx.graphics.getWidth() / 2,
+//				Gdx.graphics.getHeight() / 2, 0.0f);
+		position.pos.set(getRandomPosition());
 		position.rotation = (float) Math.PI / -2;
 
 
@@ -203,8 +204,8 @@ public class BattleScreen implements Screen {
 
 	private Vector3 getRandomPosition() {
 		Vector3 position = new Vector3();
-		position.x = (float)Math.random() * Gdx.graphics.getWidth();
-		position.y = (float)Math.random() * Gdx.graphics.getHeight();
+		position.x = (float)Math.random() * Defaults.mapWidth;
+		position.y = (float)Math.random() * Defaults.mapHeight;
 		position.z = 0.0f;
 		return position;
 	}
