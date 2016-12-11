@@ -361,7 +361,7 @@ public class BattleScreen implements Screen {
 		entity.add(movement);
 		entity.add(position);
 		entity.add(texture);
-		//entity.add(weaponed);
+		// entity.add(weaponed);
 		entity.add(exhaust);
 		entity.add(hurt);
 		entity.add(collidable);
@@ -394,10 +394,9 @@ public class BattleScreen implements Screen {
 
 
 	private void createFriendTeam(int playerRole) {
-		String[] textureFile = { Defaults.orangeShip1TextureFile,
-				Defaults.orangeShip2TextureFile,
-				Defaults.orangeShip3TextureFile,
-				Defaults.orangeShip4TextureFile};
+		String[] textureFile = { Defaults.cyanShip1TextureFile,
+				Defaults.cyanShip2TextureFile, Defaults.cyanShip3TextureFile,
+				Defaults.cyanShip4TextureFile };
 		int role = Defaults.ROLE_SHOOTER;
 		int numShips = playerRole == Defaults.ROLE_SHOOTER ? 7 : 8;
 		for (int i=0; i<numShips; i++) {
@@ -410,7 +409,7 @@ public class BattleScreen implements Screen {
 			this.entityEngine.addEntity(createShip(textureFile[i % 4], role, Defaults.FRIEND_TEAM));
 		}
 
-		String goalTextureFile = Defaults.orangeGoalShipTextureFile;
+		String goalTextureFile = Defaults.cyanGoalShipTextureFile;
 		role = Defaults.ROLE_GOAL;
 		numShips = playerRole == Defaults.ROLE_GOAL ? 2 : 3;
 		for (int i=0; i<numShips; i++) {
