@@ -65,6 +65,7 @@ public final class Defaults {
 	public static final float MINI_MAP_REDUCTION_FACTOR = 20;
 
 	public static final int MISSILE_HURT = 200;
+	public static final int CONTACT_HURT = 10;
 	public static final int HEALTH = 1000;
 
 	public static final float RESPAWN_TIME = 3.0f;
