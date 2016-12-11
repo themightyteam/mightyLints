@@ -17,7 +17,7 @@ public class TreeGoalkeeper extends BrainTree {
 					myId, aiIteration,
 					new ActionGoToClosestTeammate(myId, aiIteration), 
 					new ActionWanderRandomRegion(myId, aiIteration),
-					0.3, 
+					0.7, 
 					timeOut );
 
 			this.rootNode = branch1;

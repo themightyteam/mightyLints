@@ -2,6 +2,7 @@ package eu.mighty.ld37.game.ai.decision.tree;
 
 import eu.mighty.ld37.game.ai.AIIteration;
 import eu.mighty.ld37.game.ai.decision.RandomBranchFSMNodeWithTimeout;
+import eu.mighty.ld37.game.ai.decision.action.ActionGoToClosestEnemyGoal;
 import eu.mighty.ld37.game.ai.decision.action.ActionGoToClosestTeammate;
 import eu.mighty.ld37.game.ai.decision.action.ActionWanderRandomRegion;
 
@@ -17,10 +18,17 @@ public class TreeScorer extends BrainTree {
 					myId, aiIteration,
 					new ActionGoToClosestTeammate(myId, aiIteration), 
 					new ActionWanderRandomRegion(myId, aiIteration),
-					0.3, 
+					0.7, 
 					timeOut );
 
-			this.rootNode = branch1;
+			RandomBranchFSMNodeWithTimeout branch2 = new RandomBranchFSMNodeWithTimeout(	
+					myId, aiIteration,
+					branch1, 
+					new ActionGoToClosestEnemyGoal(myId, aiIteration),
+					0.4, 
+					timeOut );
+			
+			this.rootNode = branch2;
 		
 	}
 	

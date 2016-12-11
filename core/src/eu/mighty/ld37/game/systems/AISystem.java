@@ -314,10 +314,6 @@ public class AISystem extends IteratingSystem {
 							aiShip
 							);
 				}	
-
-
-
-
 			}
 		}
 		//Delete the map with the entities in the current slot
@@ -344,7 +340,7 @@ public class AISystem extends IteratingSystem {
 		boolean upKeyPressed = false;
 		boolean downKeyPressed = false;
 
-		if (myY - aiComponent.nextObjPos.y > 0)
+		if (myY - objectiveY > 0)
 		{
 			downKeyPressed = true;
 		}
@@ -382,7 +378,6 @@ public class AISystem extends IteratingSystem {
 				leftKeyPressed, rightKeyPressed, 
 				upKeyPressed, downKeyPressed);
 	}
-
 
 	@Override
 	protected void processEntity(Entity entity, float deltaTime) {
