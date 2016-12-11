@@ -85,6 +85,7 @@ public class CollidableSystem extends EntitySystem {
 									} else {
 										sl.goalEnemyTeam();
 									}
+									destroyShip(entityj);
 								}
 							}
 						} else if (goali != null && csj != null) {
@@ -99,6 +100,7 @@ public class CollidableSystem extends EntitySystem {
 									} else {
 										sl.goalEnemyTeam();
 									}
+									destroyShip(entityi);
 								}
 							}
 						} else {
@@ -107,7 +109,7 @@ public class CollidableSystem extends EntitySystem {
 								teami = teamM.get(entityi);
 								if (teami != null) {
 									if (entityi.getComponent(HealthComponent.class) != null) {
-										entityi.getComponent(HealthComponent.class).health -= 10;
+										entityi.getComponent(HealthComponent.class).health -= Defaults.CONTACT_HURT;
 										//System.out.println("Hurt in team: " + teami.team);
 									}
 								}
@@ -117,7 +119,7 @@ public class CollidableSystem extends EntitySystem {
 								teamj = teamM.get(entityj);
 								if (teamj != null) {
 									if (entityj.getComponent(HealthComponent.class) != null) {
-										entityj.getComponent(HealthComponent.class).health -= 10;
+										entityj.getComponent(HealthComponent.class).health -= Defaults.CONTACT_HURT;
 										//System.out.println("Hurt in team: " + teamj.team);
 									}
 								}
@@ -153,24 +155,36 @@ public class CollidableSystem extends EntitySystem {
 		HurtComponent hurt = entity.getComponent(HurtComponent.class);
 		if (hurt != null) {
 			hurt.hurted = true;
-			TeamComponent team = entity.getComponent(TeamComponent.class);
-			if (team != null) {
+//			TeamComponent team = entity.getComponent(TeamComponent.class);
+//			if (team != null) {
 				HealthComponent health = entity.getComponent(HealthComponent.class);
 				if (health != null) {
 					health.health -= Defaults.MISSILE_HURT;
-					if (health.health <= 0) {
-						System.out.println("Ship of team " + team.team + " destroyed by missile");
-						if (team.team == Defaults.FRIEND_TEAM) {
-							sl.pointEnemyTeam();
-						} else {
-							sl.pointFriendTeam();
-						}
-					}
+//					if (health.health <= 0) {
+//						System.out.println("Ship of team " + team.team + " destroyed by missile");
+//						if (team.team == Defaults.FRIEND_TEAM) {
+//							sl.pointEnemyTeam();
+//						} else {
+//							sl.pointFriendTeam();
+//						}
+//					}
 					//System.out.println("Hurt in team " + team.team + " by missile");
 				}
+//			}
+		}
+	}
+
+	private void destroyShip(Entity entity) {
+		HurtComponent hurt = entity.getComponent(HurtComponent.class);
+		if (hurt != null) {
+			hurt.hurted = true;
+			HealthComponent health = entity.getComponent(HealthComponent.class);
+			if (health != null) {
+				health.health -= Defaults.HEALTH;
 			}
 		}
 	}
+
 }
 
 

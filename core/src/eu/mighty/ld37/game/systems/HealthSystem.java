@@ -13,12 +13,15 @@ import com.badlogic.gdx.math.Vector3;
 import eu.mighty.ld37.game.Defaults;
 import eu.mighty.ld37.game.assets.AudioClips;
 import eu.mighty.ld37.game.components.*;
+import eu.mighty.ld37.game.logic.ScoreLogic;
 
 public class HealthSystem extends IteratingSystem {
 	private ComponentMapper<HealthComponent> hm = ComponentMapper.getFor(HealthComponent.class);
+	private ScoreLogic sl;
+	public HealthSystem(AudioClips audioClips, ScoreLogic sl) {
 
-	public HealthSystem(AudioClips audioClips) {
 		super(Family.all(HealthComponent.class).get());
+		this.sl = sl;
 	}
 
 	@Override
@@ -28,6 +31,14 @@ public class HealthSystem extends IteratingSystem {
 		if (hc.health <= 0) {
 			TransformComponent tc = entity.getComponent(TransformComponent.class);
 			createExplosion(tc.pos);
+			TeamComponent team = entity.getComponent(TeamComponent.class);
+			if (team!=null) {
+				if (team.team == Defaults.FRIEND_TEAM) {
+					sl.pointEnemyTeam();
+				} else {
+					sl.pointFriendTeam();
+				}
+			}
 			if (entity.getComponent(PlayerComponent.class)==null) {
 				respawnShip(entity);
 				this.getEngine().removeEntity(entity);

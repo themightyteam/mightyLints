@@ -68,7 +68,7 @@ public class BattleScreen implements Screen {
 		this.entityEngine.addSystem(new RenderingSystem(game.batcher,
 				this.scoreLogic));
 		this.entityEngine.addSystem(new CollidableSystem(scoreLogic));
-		this.entityEngine.addSystem(new HealthSystem(game.audioClips));
+		this.entityEngine.addSystem(new HealthSystem(game.audioClips, scoreLogic));
 		this.entityEngine.addSystem(new RespawnSystem());
 		this.entityEngine.addSystem(new AISystem());
 		this.entityEngine.addSystem(new CanScoreSystem());
@@ -254,8 +254,8 @@ public class BattleScreen implements Screen {
 				.createComponent(TransformComponent.class);
 		MovementComponent movement = this.entityEngine
 				.createComponent(MovementComponent.class);
-		HasWeaponComponent weaponed = this.entityEngine
-				.createComponent(HasWeaponComponent.class);
+//		HasWeaponComponent weaponed = this.entityEngine
+//				.createComponent(HasWeaponComponent.class);
 		ExhaustComponent exhaust = this.entityEngine
 				.createComponent(ExhaustComponent.class);
 		HurtComponent hurt = this.entityEngine
@@ -277,6 +277,9 @@ public class BattleScreen implements Screen {
 				break;
 			case Defaults.ROLE_GOAL:
 				roleC = this.entityEngine.createComponent(GoalComponent.class);
+				break;
+			default:
+				roleC = this.entityEngine.createComponent(HasWeaponComponent.class);
 		}
 
 
@@ -309,7 +312,7 @@ public class BattleScreen implements Screen {
 		entity.add(movement);
 		entity.add(position);
 		entity.add(texture);
-		entity.add(weaponed);
+		//entity.add(weaponed);
 		entity.add(exhaust);
 		entity.add(hurt);
 		entity.add(collidable);
