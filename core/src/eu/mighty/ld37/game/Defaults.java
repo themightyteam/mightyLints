@@ -80,7 +80,7 @@ public final class Defaults {
 
 	public static final float TIME_TO_RESCORE = 3.0f;
 
-	public static final int SCREEN_INITIAL_WAIT_TIME = 3;
+	public static final int SCREEN_INITIAL_WAIT_TIME = 30;
 
-	public static final int POINTS_TO_WIN = 500;
+	public static final int POINTS_TO_WIN = 100;
 }

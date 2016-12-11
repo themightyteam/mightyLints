@@ -530,6 +530,8 @@ public class BattleScreen implements Screen {
 		this.entityEngine.removeAllEntities();
 		this.entityEngine.clearPools();
 
+		this.entityEngine = null;
+
 		this.scoreLogic = null;
 	}
 
