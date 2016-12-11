@@ -155,9 +155,9 @@ public class CollidableSystem extends EntitySystem {
 					if (health.health <= 0) {
 						System.out.println("Ship of team " + team.team + " destroyed by missile");
 						if (team.team == Defaults.FRIEND_TEAM) {
-							sl.pointFriendTeam();
-						} else {
 							sl.pointEnemyTeam();
+						} else {
+							sl.pointFriendTeam();
 						}
 					}
 					//System.out.println("Hurt in team " + team.team + " by missile");

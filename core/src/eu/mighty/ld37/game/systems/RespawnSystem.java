@@ -23,7 +23,7 @@ public class RespawnSystem extends IteratingSystem {
 	@Override
 	public void processEntity(Entity entity, float deltaTime) {
 		DelayedSpawnComponent delayed = dm.get(entity);
-		System.out.println("Time to respawn: " + delayed.timeToSpawn);
+		//System.out.println("Time to respawn: " + delayed.timeToSpawn);
 		delayed.timeToSpawn -= deltaTime;
 		if (delayed.timeToSpawn <= 0) {
 			if (entity.getComponent(PlayerComponent.class) == null) {
