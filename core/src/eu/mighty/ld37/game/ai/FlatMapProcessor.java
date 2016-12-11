@@ -45,7 +45,7 @@ public class FlatMapProcessor extends AbstractMapProcessor {
 		{
 			for (int j = 0; j < this.numHeightZones; j++)
 			{
-				int zoneId = j + i * this.numWidthZones;
+				int zoneId = j + i * this.numHeightZones;
 				
 				Rectangle zoneRect = new Rectangle();
 				zoneRect.setX(i*widthZone);
@@ -56,6 +56,8 @@ public class FlatMapProcessor extends AbstractMapProcessor {
 				Vector2 refPoint = zoneRect.getCenter(new Vector2());
 				PathNode pathNode = new PathNode(zoneId, refPoint, zoneRect);
 				zoneList.add(pathNode);	
+				
+				
 			}
 		}
 		
@@ -68,12 +70,12 @@ public class FlatMapProcessor extends AbstractMapProcessor {
 		
 		float widthZone = new Float((1.0 * this.totalWidth)/this.numWidthZones);
 		float heightZone = new Float((1.0 * this.totalHeight)/this.numHeightZones);
-		
+
 		for ( int i = 0; i < this.numWidthRegions; i++)
 		{
 			for (int j = 0; j < this.numHeightRegions; j++)
 			{
-				int zoneId = j + i * this.numWidthRegions;
+				int zoneId = j + i * this.numHeightRegions;
 				
 				Rectangle zoneRect = new Rectangle();
 				zoneRect.setX(i*widthZone);
@@ -90,28 +92,48 @@ public class FlatMapProcessor extends AbstractMapProcessor {
 				
 				if (j != 0)
 				{
-					landingList.add(j-1);
+					int nextId = (j-1) + i * this.numHeightRegions;
+					
+					landingList.add(nextId);
 				}
 				
 				if (j != this.numHeightRegions -1)
 				{
-					jumpList.add(this.numHeightRegions + 1);
+					int nextId = (j+1) + i * this.numHeightRegions;
+					
+					jumpList.add(nextId);
 				}
 				
-				//Add to the normal list oto the left
-				normalList.add((i-1) % this.numWidthRegions);
-				normalList.add((i+1) % this.numWidthRegions);
+				//Add to the normal list to the left
+				int nextId = -1;
+				if (i == 0)
+				{
+					nextId = j + (this.numWidthRegions -1) * this.numHeightRegions;
+				}
+				else
+				{
+					 nextId = j + ((i-1) % this.numWidthRegions) * this.numHeightRegions;
+					
+				}
+								
+				normalList.add(nextId );
+				nextId = j + ((i+1) % this.numWidthRegions) * this.numHeightRegions;				
+				normalList.add( nextId );
 				
 				//Add extra list to path node
 				pathNode.setConnectionList(normalList);
 				pathNode.setConnectionJumpList(jumpList);
 				pathNode.setConnectionLandingList(landingList);
 				
+				//System.out.println("PATHNODE CONNECTIONS" + normalList.size());
+				
 				pathList.add(pathNode);
+				
+				System.out.println("Including node "+zoneId);
 			}
 		}		
 		
-		return null;
+		return pathList;
 	}
 	
 	
@@ -129,7 +151,7 @@ public class FlatMapProcessor extends AbstractMapProcessor {
 		int i = new Float(x/widthZone).intValue();
 		int j = new Float(y/heightZone).intValue();
 		
-		int zoneId = j + i * this.numWidthZones;
+		int zoneId = j + i * this.numHeightZones;
 		
 		return zoneId;
 	}
@@ -149,7 +171,7 @@ public class FlatMapProcessor extends AbstractMapProcessor {
 		int i = new Float(x/widthZone).intValue();
 		int j = new Float(y/heightZone).intValue();
 		
-		int zoneId = j + i * this.numWidthRegions;
+		int zoneId = j + i * this.numHeightRegions;
 		
 		return zoneId;
 	}

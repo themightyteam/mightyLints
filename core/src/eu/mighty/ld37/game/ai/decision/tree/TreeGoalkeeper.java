@@ -5,7 +5,7 @@ import eu.mighty.ld37.game.ai.decision.RandomBranchFSMNodeWithTimeout;
 import eu.mighty.ld37.game.ai.decision.action.ActionGoToClosestTeammate;
 import eu.mighty.ld37.game.ai.decision.action.ActionWanderRandomRegion;
 
-public class TreeGoalkeeper extends Tree {
+public class TreeGoalkeeper extends BrainTree {
 
 	public TreeGoalkeeper(int myId, AIIteration aiIteration,
 			int timeOut)

@@ -66,4 +66,6 @@ public final class Defaults {
 	public static final int HEALTH = 1000;
 
 	public static final float RESPAWN_TIME = 3.0f;
+	
+	public static final int DECISION_TIMEOUT = 300;
 }

@@ -1,9 +1,10 @@
 package eu.mighty.ld37.game.components;
 
-import sun.reflect.generics.tree.Tree;
 import ai.pathfinding.commons.PredictedPath;
 
 import com.badlogic.ashley.core.Component;
+
+import eu.mighty.ld37.game.ai.decision.tree.BrainTree;
 
 public class AIShipComponent extends AIRelevantComponent implements Component {
 	//TODO: put AI information here
@@ -30,7 +31,7 @@ public class AIShipComponent extends AIRelevantComponent implements Component {
 	
 	public int targetShipId;
 	
-	Tree decisionTree;
+	public BrainTree decisionTree;
 	
 	
 }

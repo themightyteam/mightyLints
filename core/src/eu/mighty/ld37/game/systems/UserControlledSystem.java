@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 
 import eu.mighty.ld37.game.Defaults;
+import eu.mighty.ld37.game.components.AIBulletComponent;
 import eu.mighty.ld37.game.components.BulletComponent;
 import eu.mighty.ld37.game.components.CollidableComponent;
 import eu.mighty.ld37.game.components.ExhaustComponent;
@@ -118,7 +119,9 @@ public class UserControlledSystem extends IteratingSystem {
 		ExhaustComponent exhaust = ((PooledEngine) this.getEngine())
 				.createComponent(ExhaustComponent.class);
 
-
+		AIBulletComponent aiBulletComponent = ((PooledEngine) this.getEngine())
+		.createComponent(AIBulletComponent.class);
+		
 		Texture tex = new Texture(
 				Gdx.files.internal(Defaults.missileBasicTextureFile));
 		texture.region = new TextureRegion(tex, 0, 0, tex.getWidth() - 1,
@@ -152,6 +155,7 @@ public class UserControlledSystem extends IteratingSystem {
 		entity.add(texture);
 		entity.add(collidable);
 		entity.add(exhaust);
+		entity.add(aiBulletComponent);
 
 		this.getEngine().addEntity(entity);
 	}

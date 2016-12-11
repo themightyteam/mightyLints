@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import ai.pathfinding.AStar;
 import ai.pathfinding.commons.PathfindingGraph;
+import ai.pathfinding.heu.EstimatedCostHeuristic;
 import ai.pathfinding.heu.EuclideanDistanceHeuristic;
 import ai.world.AIWorld;
 
@@ -16,6 +17,7 @@ import com.badlogic.ashley.systems.IteratingSystem;
 import eu.mighty.ld37.game.Defaults;
 import eu.mighty.ld37.game.ai.AIIteration;
 import eu.mighty.ld37.game.ai.FlatMapProcessor;
+import eu.mighty.ld37.game.ai.decision.tree.TreeGoalkeeper;
 import eu.mighty.ld37.game.components.AIBulletComponent;
 import eu.mighty.ld37.game.components.AIRelevantComponent;
 import eu.mighty.ld37.game.components.AIShipComponent;
@@ -41,11 +43,17 @@ public class AISystem extends IteratingSystem {
 	private ComponentMapper<GoalComponent> goalMapper;
 	private ComponentMapper<CanScoreComponent> scoreMapper;
 
+	private int currentAIId = 1;
+
 	private int currentIt;
+	
+	AIIteration nextIteration;
 
 	public AISystem(){	
-		this(Family.all(AIRelevantComponent.class).one(BulletComponent.class, 
+		this(Family.one(AIShipComponent.class, AIBulletComponent.class).one(BulletComponent.class, 
 				TeamComponent.class).get());
+
+
 	}
 
 	public AISystem(Family family) {
@@ -58,9 +66,10 @@ public class AISystem extends IteratingSystem {
 				Defaults.NUM_HEIGHT_ZONES,
 				Defaults.NUM_WIDTH_REGIONS,
 				Defaults.NUM_HEIGHT_REGIONS);
-		
+
 		// Init the AI
-		this.aiWorld = new AIWorld(mapProcessor, "zoning", "pathfinding");
+		this.aiWorld = new AIWorld(this.mapProcessor, "zoning", "pathfinding");
+		//this.aiWorld.aStarFullTest();
 
 		//Obtain the mappers
 		this.aiMapper = ComponentMapper.getFor(AIRelevantComponent.class);
@@ -73,6 +82,8 @@ public class AISystem extends IteratingSystem {
 		this.goalMapper = ComponentMapper.getFor(GoalComponent.class);
 		this.scoreMapper = ComponentMapper.getFor(CanScoreComponent.class);
 		this.currentIt = 0;
+		this.nextIteration = new AIIteration();
+		
 	}
 
 	public void updateShipInformation(AIShipComponent aiShip,
@@ -109,8 +120,8 @@ public class AISystem extends IteratingSystem {
 		//Update the region
 		aiShip.currentRegion = newRegion;
 		aiShip.currentZone = newZone;
-		
-		this.currentIt = this.currentIt + 1;
+
+
 	}
 
 	public void updateBulletInformation(AIBulletComponent aiBullet,
@@ -138,7 +149,8 @@ public class AISystem extends IteratingSystem {
 		ArrayList<Integer> scoreFriendTeamList = new ArrayList<Integer>();
 		ArrayList<Integer> scoreEnemyTeamList = new ArrayList<Integer>();
 		ArrayList<Integer> bulletList = new ArrayList<Integer>();
-		
+	
+
 		//processing stuff here (update parameters of ships)
 		for (Integer key : this.entityMap.keySet())
 		{
@@ -152,11 +164,12 @@ public class AISystem extends IteratingSystem {
 			TeamComponent teamComp = this.teamMapper.get(entity);
 			CanScoreComponent canScoreComp = this.scoreMapper.get(entity);
 			GoalComponent goalComp = this.goalMapper.get(entity);
+			PlayerComponent playerComp = this.playerMapper.get(entity);
 			
 			if (aiShip != null)
 			{
 				this.updateShipInformation(aiShip, transComp);
-				
+
 				if (teamComp.team == Defaults.FRIEND_TEAM)
 				{
 					friendTeamList.add(aiShip.idAIObject);
@@ -165,12 +178,12 @@ public class AISystem extends IteratingSystem {
 						//It is goal 
 						goalFriendTeamList.add(aiShip.idAIObject);
 					}
-					
+
 					if (canScoreComp != null)
 					{
 						scoreFriendTeamList.add(aiShip.idAIObject);
 					}
-					
+
 				}
 				else
 				{
@@ -180,28 +193,28 @@ public class AISystem extends IteratingSystem {
 						//It is goal 
 						goalEnemyTeamList.add(aiShip.idAIObject);
 					}
-					
+
 					if (canScoreComp != null)
 					{
 						scoreEnemyTeamList.add(aiShip.idAIObject);
 					}
 				}
-				
-				
-				
+
+
+
 			}
 
 			if (aiBullet != null)
 			{
 				this.updateBulletInformation(aiBullet, transComp);
-				
+
 				//Add the bullet to the list
 				bulletList.add(aiBullet.idAIObject);
 			}	
 		}
-		
+
 		//Prepare the object for the decision system
-		AIIteration nextIteration = new AIIteration(
+		this.nextIteration.update(
 				this.currentIt,
 				this.mapProcessor,
 				this.entityMap,
@@ -215,19 +228,24 @@ public class AISystem extends IteratingSystem {
 		//2) if decision and not path the path
 		//3) if not decision then decision and after that path
 		//4) perform the movement
-		
+
 		AStar aStar = new AStar();
+		
+		EstimatedCostHeuristic heuristic = 
+				new EuclideanDistanceHeuristic( this.aiWorld.getNodeList());
+	
+		
 		for (Integer key : this.entityMap.keySet())
 		{
 			//Check if this is ai controlled ship
 			if (this.playerMapper.get(this.entityMap.get(key)) == null)
 			{
 				//TODO: If true do magic here!
-				
+
 				//Pick the ai object 
 				//Update information
 				AIShipComponent aiShip = this.aiShipMapper.get(this.entityMap.get(key));
-				
+
 				if (aiShip != null)
 				{
 					if ( aiShip.hasActiveDecision  && aiShip.currentPath != null)
@@ -235,36 +253,101 @@ public class AISystem extends IteratingSystem {
 						continue;
 					}
 					else
-					{	
+					{
+						
+						//If path is null then recalculate the path
+						if (aiShip.idTargetNode != aiShip.currentRegion)
+						{
+							//System.out.println("CURRENT REGION "+ aiShip.currentRegion);
+							//System.out.println("TARGET NODE "+ aiShip.idTargetNode);
+							
+							aiShip.currentPath = aStar.pathfindAStar( new PathfindingGraph(this.aiWorld.getGraphMap()), 
+									aiShip.currentRegion, 
+									aiShip.idTargetNode, 
+									heuristic);
+						}
+						
 						//A new decision must be performed
 						//TODO
 					}
 				}
+
 				
-				//If path is null then recalculate the path
-				if (aiShip.idTargetNode != aiShip.currentRegion)
-				{
-					aiShip.currentPath = aStar.pathfindAStar( new PathfindingGraph(aiWorld.getGraphMap()), 
-							aiShip.currentRegion, 
-							aiShip.idTargetNode, 
-							new EuclideanDistanceHeuristic());
-				}
 			}
 		}
 		//Delete the map with the entities in the current slot
 		this.entityMap.clear();
+		
+		this.currentIt = this.currentIt + 1;
 	}
 
 	@Override
 	protected void processEntity(Entity entity, float deltaTime) {
 
 		//Obtain the AI component
-		AIRelevantComponent aiComp = this.aiMapper.get(entity);
-		this.entityMap.put(aiComp.idAIObject, entity);
+		AIShipComponent aiShipComp = this.aiShipMapper.get(entity);
+		AIBulletComponent aiBulletComp = this.aiBulletMapper.get(entity);
 
+		if (aiShipComp != null)
+		{
+			//Check if it is the first time seeing this object
+			if (aiShipComp.idAIObject == 0)
+			{
+				//Initialize stuff here
+				aiShipComp.idAIObject = this.currentAIId;
+				//Create the new decision system
+				
+				GoalComponent goalShipComp = this.goalMapper.get(entity);
+				CanScoreComponent scoreShipComp = this.scoreMapper.get(entity);
+				
+				if (goalShipComp != null)
+				{
+					aiShipComp.decisionTree = new TreeGoalkeeper(aiShipComp.idAIObject,
+							this.nextIteration,
+							Defaults.DECISION_TIMEOUT);
+				} else if (scoreShipComp != null)
+				{
+					
+					//FIXME: change for a more convenient tree
+					aiShipComp.decisionTree = new TreeGoalkeeper(aiShipComp.idAIObject,
+							this.nextIteration,
+							Defaults.DECISION_TIMEOUT);
+				}
+				else
+				{
+					
+					//FIXME: change for a more convenient tree
+					aiShipComp.decisionTree = new TreeGoalkeeper(aiShipComp.idAIObject,
+							this.nextIteration,
+							Defaults.DECISION_TIMEOUT);
+				}
+				
+				
+				this.currentAIId += 1;
+				//System.out.println("XXXXXXXx CURENT AI "+this.currentAIId);
+			}
+			else
+			{
+				//System.out.println("I KNOW THIS GUY  "+this.currentAIId);
+			}
+			this.entityMap.put(aiShipComp.idAIObject, entity);
+
+		}
+		if (aiBulletComp != null)
+		{
+			if (aiBulletComp.idAIObject == 0)
+			{
+				//Initialize stuff here
+				aiBulletComp.idAIObject = this.currentAIId;
+				this.currentAIId += 1;
+				//System.out.println("XXXXXXXx CURENT AI "+this.currentAIId);
+			}
+			else
+			{
+				//System.out.println("I KNOW THIS GUY  "+this.currentAIId);
+			}
+			
+			this.entityMap.put(aiBulletComp.idAIObject, entity);	
+		}
 	}
-
-
-
-
 }

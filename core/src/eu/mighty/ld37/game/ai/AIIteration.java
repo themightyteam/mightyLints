@@ -38,7 +38,12 @@ public class AIIteration {
 	private ComponentMapper<TransformComponent> transformMapper;
 	int currentIt;
 
-	public AIIteration(
+	
+	public AIIteration()
+	{
+		
+	}
+	public void update(
 			int currentIt,
 			FlatMapProcessor mapProcessor,
 			HashMap<Integer, Entity> entityMap, 
@@ -85,12 +90,7 @@ public class AIIteration {
 	
 	public int getDecisionIt()
 	{
-
-
-		return currentId;
-		
-		
-		
+		return currentIt;
 	}
 
 	public int obtainClosestTeamMateSquare(int idObject)

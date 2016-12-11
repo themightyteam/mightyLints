@@ -1,8 +1,7 @@
 package eu.mighty.ld37.game.ai.decision;
 
-import eu.mighty.ld37.game.ai.AIIteration;
-import ai.decision.AlienFSMDecisor;
 import ai.decision.decisiontree.DecisionTreeNode;
+import eu.mighty.ld37.game.ai.AIIteration;
 
 public class RandomBranchFSMNodeWithTimeout extends RandomBranchFSMNode 
 {
