@@ -59,7 +59,7 @@ public class RespawnSystem extends IteratingSystem {
 				entity.add(texture);
 			}
 			entity.remove(DelayedSpawnComponent.class);
-			System.out.println("Ship respawned!!!!");
+			//System.out.println("Ship respawned!!!!");
 		}
 
 	}

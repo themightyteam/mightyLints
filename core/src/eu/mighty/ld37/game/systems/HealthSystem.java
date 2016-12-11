@@ -160,7 +160,7 @@ public class HealthSystem extends IteratingSystem {
 		dc.timeToSpawn = Defaults.RESPAWN_TIME;
 		newEntity.add(dc);
 
-		System.out.println("Ship scheduled to respawn");
+		//System.out.println("Ship scheduled to respawn");
 
 
 		newEntity.add(ship);
