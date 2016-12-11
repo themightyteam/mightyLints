@@ -3,6 +3,8 @@ package eu.mighty.ld37.game.systems;
 import com.badlogic.ashley.core.*;
 import com.badlogic.ashley.utils.ImmutableArray;
 
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
 import eu.mighty.ld37.game.Defaults;
 import eu.mighty.ld37.game.components.*;
 import eu.mighty.ld37.game.logic.ScoreLogic;
@@ -58,8 +60,9 @@ public class CollidableSystem extends EntitySystem {
 				transformj = tm.get(entityj);
 				collidablej = cm.get(entityj);
 
-				if ((Math.abs(transformi.pos.x - transformj.pos.x) < collidablei.collidable_zone.getWidth())
-					&&(Math.abs(transformi.pos.y - transformj.pos.y) < collidablei.collidable_zone.getHeight())) {
+//				if ((Math.abs(transformi.pos.x - transformj.pos.x) < collidablei.collidable_zone.getWidth())
+//					&&(Math.abs(transformi.pos.y - transformj.pos.y) < collidablei.collidable_zone.getHeight())) {
+				if (areColliding(transformi.pos, transformj.pos, collidablei.collidable_zone, collidablej.collidable_zone)) {
 					hurti = hm.get(entityi);
 					hurtj = hm.get(entityj);
 					shipi = sm.get(entityi);
@@ -116,6 +119,17 @@ public class CollidableSystem extends EntitySystem {
 				}
 			}
 		}
+	}
+
+
+	private boolean areColliding(Vector3 pos1, Vector3 pos2, Rectangle rect1, Rectangle rect2) {
+//		return ((Math.abs(pos1.x - pos2.x) < Math.min(rect1.getWidth(), rect2.getWidth()))
+//				&&(Math.abs(pos1.y - pos2.y) < Math.min(rect1.getHeight(), rect2.getHeight())));
+		rect1.setPosition(pos1.x, pos1.y);
+		rect2.setPosition(pos2.x, pos2.y);
+
+		return rect1.overlaps(rect2);
+
 	}
 
 
