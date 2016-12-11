@@ -1,5 +1,6 @@
 package eu.mighty.ld37.game.screen;
 
+import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
@@ -15,19 +16,7 @@ import com.badlogic.gdx.math.Vector3;
 
 import eu.mighty.ld37.MightyLD37Game;
 import eu.mighty.ld37.game.Defaults;
-import eu.mighty.ld37.game.components.BackgroundComponent;
-import eu.mighty.ld37.game.components.CollidableComponent;
-import eu.mighty.ld37.game.components.DelayedSpawnComponent;
-import eu.mighty.ld37.game.components.ExhaustComponent;
-import eu.mighty.ld37.game.components.HasWeaponComponent;
-import eu.mighty.ld37.game.components.HealthComponent;
-import eu.mighty.ld37.game.components.HurtComponent;
-import eu.mighty.ld37.game.components.MovementComponent;
-import eu.mighty.ld37.game.components.PlayerComponent;
-import eu.mighty.ld37.game.components.ShipComponent;
-import eu.mighty.ld37.game.components.TeamComponent;
-import eu.mighty.ld37.game.components.TextureComponent;
-import eu.mighty.ld37.game.components.TransformComponent;
+import eu.mighty.ld37.game.components.*;
 import eu.mighty.ld37.game.listeners.AudioListener;
 import eu.mighty.ld37.game.listeners.AudioRespawnListener;
 import eu.mighty.ld37.game.logic.ScoreLogic;
@@ -157,6 +146,10 @@ public class BattleScreen implements Screen {
 		entity.add(teamComponent);
 		entity.add(health);
 
+		CanScoreComponent csc = this.entityEngine.createComponent(CanScoreComponent.class);
+		entity.add(csc);
+
+
 		this.entityEngine.addEntity(entity);
 
 		return entity;
@@ -229,7 +222,7 @@ public class BattleScreen implements Screen {
 	}
 
 
-	private Entity createShip(String textureFile, float velocity, int team) {
+	private Entity createShip(String textureFile, int role, int team) {
 		Entity entity = this.entityEngine.createEntity();
 
 		ShipComponent ship = this.entityEngine
@@ -240,7 +233,6 @@ public class BattleScreen implements Screen {
 				.createComponent(TransformComponent.class);
 		MovementComponent movement = this.entityEngine
 				.createComponent(MovementComponent.class);
-		movement.velocity.set(velocity, 0);
 		HasWeaponComponent weaponed = this.entityEngine
 				.createComponent(HasWeaponComponent.class);
 		ExhaustComponent exhaust = this.entityEngine
@@ -253,14 +245,19 @@ public class BattleScreen implements Screen {
 				.createComponent(TeamComponent.class);
 		HealthComponent health = this.entityEngine
 				.createComponent(HealthComponent.class);
+		Component roleC = null;
+		switch (role) {
+			case Defaults.ROLE_SCORER:
+				roleC = this.entityEngine.createComponent(CanScoreComponent.class);
+				break;
+			case Defaults.ROLE_GOAL:
+				roleC = this.entityEngine.createComponent(GoalComponent.class);
+		}
 
 
 		position.pos.set(getRandomPosition());
-		if (velocity > 0) {
-			position.rotation = Defaults.PLAYER_ROTATION_HEADING_RIGHT;
-		} else {
-			position.rotation = Defaults.PLAYER_ROTATION_HEADING_LEFT;
-		}
+		position.rotation = Defaults.PLAYER_ROTATION_HEADING_RIGHT;
+
 
 		Texture tex = new Texture(
 				Gdx.files.internal(textureFile));
@@ -293,6 +290,9 @@ public class BattleScreen implements Screen {
 		entity.add(collidable);
 		entity.add(teamComponent);
 		entity.add(health);
+		if (roleC != null) {
+			entity.add(roleC);
+		}
 
 		return entity;
 	}
@@ -300,41 +300,74 @@ public class BattleScreen implements Screen {
 
 	private void createEnemyTeam() {
 		String textureFile = Defaults.orangeShip1TextureFile;
-		for (int i = 0; i < Defaults.NUMBER_OF_MEMBERS_IN_ONE_TEAM - 1; i++) {
-			if (i == 0) {
-				textureFile = Defaults.orangeShip1TextureFile;
-			} else if (i == 1) {
-				textureFile = Defaults.orangeShip2TextureFile;
-			} else if (i == 2) {
-				textureFile = Defaults.orangeShip3TextureFile;
-			} else if (i == 3) {
-				textureFile = Defaults.orangeShip4TextureFile;
-			} else if (i >= 4) {
-				textureFile = Defaults.orangeGoalShipTextureFile;
-			}
-			this.entityEngine.addEntity(createShip(textureFile, 0.0f,
-					Defaults.ENEMY_TEAM));
-		}
+		int role = Defaults.ROLE_SHOOTER;
+		this.entityEngine.addEntity(createShip(textureFile, role, Defaults.ENEMY_TEAM));
+
+		textureFile = Defaults.orangeShip2TextureFile;
+		role = Defaults.ROLE_SCORER;
+		this.entityEngine.addEntity(createShip(textureFile, role, Defaults.ENEMY_TEAM));
+
+		textureFile = Defaults.orangeGoalShipTextureFile;
+		role = Defaults.ROLE_GOAL;
+		this.entityEngine.addEntity(createShip(textureFile, role, Defaults.ENEMY_TEAM));
 	}
+
 
 	private void createFriendTeam() {
 		String textureFile = Defaults.cyanShip1TextureFile;
-		for (int i = 0; i < Defaults.NUMBER_OF_MEMBERS_IN_ONE_TEAM - 2; i++ ) {
-			if (i == 0) {
-				textureFile = Defaults.cyanShip1TextureFile;
-			} else if (i == 1) {
-				textureFile = Defaults.cyanShip2TextureFile;
-			} else if (i == 2) {
-				textureFile = Defaults.cyanShip3TextureFile;
-			} else if (i == 3) {
-				textureFile = Defaults.cyanShip4TextureFile;
-			} else if (i >= 4) {
-				textureFile = Defaults.cyanGoalShipTextureFile;
-			}
-			this.entityEngine.addEntity(createShip(textureFile, 0.0f,
-					Defaults.FRIEND_TEAM));
-		}
+		int role = Defaults.ROLE_SHOOTER;
+		this.entityEngine.addEntity(createShip(textureFile, role, Defaults.FRIEND_TEAM));
+
+		textureFile = Defaults.cyanShip2TextureFile;
+		role = Defaults.ROLE_SCORER;
+		this.entityEngine.addEntity(createShip(textureFile, role, Defaults.FRIEND_TEAM));
+
+		textureFile = Defaults.cyanGoalShipTextureFile;
+		role = Defaults.ROLE_GOAL;
+		this.entityEngine.addEntity(createShip(textureFile, role, Defaults.FRIEND_TEAM));
 	}
+
+
+//	private void createEnemyTeam() {
+//		String textureFile = Defaults.orangeShip1TextureFile;
+//		for (int i = 0; i < Defaults.NUMBER_OF_MEMBERS_IN_ONE_TEAM - 1; i++) {
+//			if (i == 0) {
+//				textureFile = Defaults.orangeShip1TextureFile;
+//			} else if (i == 1) {
+//				textureFile = Defaults.orangeShip2TextureFile;
+//			} else if (i == 2) {
+//				textureFile = Defaults.orangeShip3TextureFile;
+//			} else if (i == 3) {
+//				textureFile = Defaults.orangeShip4TextureFile;
+//			} else if (i >= 4) {
+//				textureFile = Defaults.orangeGoalShipTextureFile;
+//			}
+//			this.entityEngine.addEntity(createShip(textureFile, 0.0f,
+//					Defaults.ENEMY_TEAM));
+//		}
+//	}
+//
+//	private void createFriendTeam() {
+//		String textureFile = Defaults.cyanShip1TextureFile;
+//		int role = Defaults.ROLE_SHOOTER;
+//		for (int i = 0; i < Defaults.NUMBER_OF_MEMBERS_IN_ONE_TEAM - 2; i++ ) {
+//			if (i == 0) {
+//				textureFile = Defaults.cyanShip1TextureFile;
+//			} else if (i == 1) {
+//				textureFile = Defaults.cyanShip2TextureFile;
+//				role = Defaults.ROLE_SCORER;
+//			} else if (i == 2) {
+//				textureFile = Defaults.cyanGoalShipTextureFile;
+//				role = Defaults.ROLE_GOAL;
+//			} else if (i == 3) {
+//				textureFile = Defaults.cyanShip4TextureFile;
+//			} else if (i >= 4) {
+//				textureFile = Defaults.cyanGoalShipTextureFile;
+//			}
+//			this.entityEngine.addEntity(createShip(textureFile, 0.0f,
+//					Defaults.FRIEND_TEAM, role));
+//		}
+//	}
 
 
 	@Override

@@ -102,7 +102,7 @@ public class CollidableSystem extends EntitySystem {
 								if (teami != null) {
 									if (entityi.getComponent(HealthComponent.class) != null) {
 										entityi.getComponent(HealthComponent.class).health -= 10;
-										System.out.println("Hurt in team: " + teami.team);
+										//System.out.println("Hurt in team: " + teami.team);
 									}
 								}
 							}
@@ -112,7 +112,7 @@ public class CollidableSystem extends EntitySystem {
 								if (teamj != null) {
 									if (entityj.getComponent(HealthComponent.class) != null) {
 										entityj.getComponent(HealthComponent.class).health -= 10;
-										System.out.println("Hurt in team: " + teamj.team);
+										//System.out.println("Hurt in team: " + teamj.team);
 									}
 								}
 							}
