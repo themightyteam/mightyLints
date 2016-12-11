@@ -1,14 +1,24 @@
 package eu.mighty.ld37.game.systems;
 
-import com.badlogic.ashley.core.*;
+import com.badlogic.ashley.core.Engine;
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.EntitySystem;
+import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
-import eu.mighty.ld37.game.components.*;
+
+import eu.mighty.ld37.game.components.BulletComponent;
+import eu.mighty.ld37.game.components.CollidableComponent;
+import eu.mighty.ld37.game.components.ExplosionComponent;
+import eu.mighty.ld37.game.components.HealthComponent;
+import eu.mighty.ld37.game.components.TeamComponent;
+import eu.mighty.ld37.game.components.TransformComponent;
 
 public class CollidableSystem extends EntitySystem {
 
 	private ImmutableArray<Entity> entities;
 
-	public CollidableSystem() {}
+	public CollidableSystem() {
+	}
 
 	@Override
 	public void addedToEngine(Engine engine) {

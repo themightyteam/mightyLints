@@ -46,18 +46,20 @@ public class BattleScreen implements Screen {
 	public void show() {
 		this.entityEngine = new PooledEngine();
 
-		this.entityEngine.addSystem(new UserControlledSystem());
+		this.entityEngine.addSystem(new UserControlledSystem(game.audioClips));
 		this.entityEngine.addSystem(new MovementSystem());
 		this.entityEngine.addSystem(new BulletSystem());
 		this.entityEngine.addSystem(new ParallaxSystem());
 		this.entityEngine.addSystem(new RenderingSystem(game.batcher));
 		this.entityEngine.addSystem(new CollidableSystem());
-		this.entityEngine.addSystem(new HealthSystem());
+		this.entityEngine.addSystem(new HealthSystem(game.audioClips));
 
 		createBackgrounds();
 		createPlayer();
 		createFriendTeam();
 		createEnemyTeam();
+
+		this.game.musics.playTurkishMarch();
 	}
 
 	@Override
@@ -284,13 +286,13 @@ public class BattleScreen implements Screen {
 
 	@Override
 	public void pause() {
-		// TODO Auto-generated method stub
+		this.game.musics.pauseTurkishMarch();
 
 	}
 
 	@Override
 	public void resume() {
-		// TODO Auto-generated method stub
+		this.game.musics.playTurkishMarch();
 
 	}
 
