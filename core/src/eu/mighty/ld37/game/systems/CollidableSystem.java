@@ -1,9 +1,6 @@
 package eu.mighty.ld37.game.systems;
 
-import com.badlogic.ashley.core.Engine;
-import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.EntitySystem;
-import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.core.*;
 import com.badlogic.ashley.utils.ImmutableArray;
 
 import eu.mighty.ld37.game.Defaults;
@@ -30,6 +27,14 @@ public class CollidableSystem extends EntitySystem {
 
 		super.update(deltaTime);
 
+		ComponentMapper<CollidableComponent> cm = ComponentMapper.getFor(CollidableComponent.class);
+		ComponentMapper<TransformComponent> tm = ComponentMapper.getFor(TransformComponent.class);
+		ComponentMapper<HurtComponent> hm = ComponentMapper.getFor(HurtComponent.class);
+		ComponentMapper<ShipComponent> sm = ComponentMapper.getFor(ShipComponent.class);
+		ComponentMapper<CanScoreComponent> csm = ComponentMapper.getFor(CanScoreComponent.class);
+		ComponentMapper<GoalComponent> gm = ComponentMapper.getFor(GoalComponent.class);
+
+
 		Entity entityi, entityj;
 		TransformComponent transformi, transformj;
 		CollidableComponent collidablei, collidablej;
@@ -43,27 +48,28 @@ public class CollidableSystem extends EntitySystem {
 		for (int i = 0; i < entities.size(); i++) {
 
 			entityi = entities.get(i);
-			transformi = entityi.getComponent(TransformComponent.class);
-			collidablei = entityi.getComponent(CollidableComponent.class);
+			transformi = tm.get(entityi);
+			collidablei = cm.get(entityi);
 
 			for (int j=i+1; j<entities.size(); j++) {
 
 				entityj = entities.get(j);
-				transformj = entityj.getComponent(TransformComponent.class);
-				collidablej = entityj.getComponent(CollidableComponent.class);
+				transformj = tm.get(entityj);
+				collidablej = cm.get(entityj);
 
 				if ((Math.abs(transformi.pos.x - transformj.pos.x) < collidablei.collidable_zone.getWidth())
 					&&(Math.abs(transformi.pos.y - transformj.pos.y) < collidablei.collidable_zone.getHeight())) {
-					hurti = entityi.getComponent(HurtComponent.class);
-					hurtj = entityj.getComponent(HurtComponent.class);
-					bulleti = entityi.getComponent(BulletComponent.class);
-					bulletj = entityj.getComponent(BulletComponent.class);
-					shipi = entityi.getComponent(ShipComponent.class);
-					shipj = entityj.getComponent(ShipComponent.class);
-					csi = entityi.getComponent(CanScoreComponent.class);
-					csj = entityj.getComponent(CanScoreComponent.class);
-					goali = entityi.getComponent(GoalComponent.class);
-					goalj = entityj.getComponent(GoalComponent.class);
+					hurti = hm.get(entityi);
+					hurtj = hm.get(entityj);
+
+					//bulleti = entityi.getComponent(BulletComponent.class);
+					//bulletj = entityj.getComponent(BulletComponent.class);
+					shipi = sm.get(entityi);
+					shipj = sm.get(entityj);
+					csi = csm.get(entityi);
+					csj = csm.get(entityj);
+					goali = gm.get(entityi);
+					goalj = gm.get(entityj);
 					if (shipi != null && shipj != null) {
 						if (csi != null && goalj != null) {
 							sl.goalFriendTeam();

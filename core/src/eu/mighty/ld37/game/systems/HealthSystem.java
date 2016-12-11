@@ -57,82 +57,92 @@ public class HealthSystem extends IteratingSystem {
 
 
 	public void respawnShip(Entity entity) {
+//		if (entity.getComponent(ShipComponent.class) == null) return;
+//		Entity newEntity = new Entity();
+//
+//		ImmutableArray<Component> components = entity.getComponents();
+//		for (Component component : components) {
+//			newEntity.add(component);
+//		}
+//
+//		TransformComponent tc = newEntity.getComponent(TransformComponent.class);
+//		tc.pos.y = 0;
+//
+//		HealthComponent hc = newEntity.getComponent(HealthComponent.class);
+//		hc.health = Defaults.HEALTH;
+//
+//		DelayedSpawnComponent dc = ((PooledEngine)this.getEngine()).createComponent(DelayedSpawnComponent.class);
+//		newEntity.add(dc);
+//
+//		System.out.println("Ship scheduled to respawn");
+//
+//		this.getEngine().addEntity(newEntity);
+
 		Entity newEntity = new Entity();
 
-		ImmutableArray<Component> components = entity.getComponents();
-		for (Component component : components) {
-			newEntity.add(component);
-		}
+		ShipComponent ship = ((PooledEngine)this.getEngine())
+				.createComponent(ShipComponent.class);
+		TextureComponent texture = ((PooledEngine)this.getEngine())
+				.createComponent(TextureComponent.class);
+		TransformComponent position = ((PooledEngine)this.getEngine())
+				.createComponent(TransformComponent.class);
+		MovementComponent movement = ((PooledEngine)this.getEngine())
+				.createComponent(MovementComponent.class);
+		HasWeaponComponent weaponed = ((PooledEngine)this.getEngine())
+				.createComponent(HasWeaponComponent.class);
+		ExhaustComponent exhaust = ((PooledEngine)this.getEngine())
+				.createComponent(ExhaustComponent.class);
+		HurtComponent hurt = ((PooledEngine)this.getEngine())
+				.createComponent(HurtComponent.class);
+		CollidableComponent collidable = ((PooledEngine)this.getEngine())
+				.createComponent(CollidableComponent.class);
+		TeamComponent teamComponent = ((PooledEngine)this.getEngine())
+				.createComponent(TeamComponent.class);
+		HealthComponent health = ((PooledEngine)this.getEngine())
+				.createComponent(HealthComponent.class);
 
-		TransformComponent tc = newEntity.getComponent(TransformComponent.class);
-		tc.pos.y = Defaults.mapHeight*2;
 
-		HealthComponent hc = newEntity.getComponent(HealthComponent.class);
-		hc.health = Defaults.HEALTH;
+		position.pos.set(0, 0, 0);
+		position.rotation = Defaults.PLAYER_ROTATION_HEADING_RIGHT;
+
+		TextureComponent tc = entity.getComponent(TextureComponent.class);
+		texture.region = tc.region;
+
+		CollidableComponent cc = entity.getComponent(CollidableComponent.class);
+		collidable.collidable_zone = cc.collidable_zone;
+
+		TeamComponent teamC = entity.getComponent(TeamComponent.class);
+		teamComponent.team = teamC.team;
+
+		health.health = Defaults.HEALTH;
+
+		exhaust.pe_left = new ParticleEffect();
+		exhaust.pe_right = new ParticleEffect();
+		exhaust.pe_left.load(Gdx.files.internal("exhaust_left.particle"), Gdx.files.internal(""));
+		exhaust.pe_right.load(Gdx.files.internal("exhaust_right.particle"), Gdx.files.internal(""));
+		exhaust.pe_left.start();
+		exhaust.pe_right.start();
+
+		hurt.pe_hurt = new ParticleEffect();
+		hurt.pe_hurt.load(Gdx.files.internal("hurt.particle"), Gdx.files.internal(""));
+		hurt.pe_hurt.start();
 
 		DelayedSpawnComponent dc = ((PooledEngine)this.getEngine()).createComponent(DelayedSpawnComponent.class);
 		newEntity.add(dc);
 
 		System.out.println("Ship scheduled to respawn");
 
-		this.getEngine().addEntity(newEntity);
 
-//		ShipComponent ship = this.entityEngine
-//				.createComponent(ShipComponent.class);
-//		TextureComponent texture = this.entityEngine
-//				.createComponent(TextureComponent.class);
-//		TransformComponent position = this.entityEngine
-//				.createComponent(TransformComponent.class);
-//		MovementComponent movement = this.entityEngine
-//				.createComponent(MovementComponent.class);
-//		HasWeaponComponent weaponed = this.entityEngine
-//				.createComponent(HasWeaponComponent.class);
-//		ExhaustComponent exhaust = this.entityEngine
-//				.createComponent(ExhaustComponent.class);
-//		HurtComponent hurt = this.entityEngine
-//				.createComponent(HurtComponent.class);
-//		CollidableComponent collidable = this.entityEngine
-//				.createComponent(CollidableComponent.class);
-//		TeamComponent teamComponent = this.entityEngine
-//				.createComponent(TeamComponent.class);
-//		HealthComponent health = this.entityEngine
-//				.createComponent(HealthComponent.class);
-//
-//
-//		position.pos.set(getRandomPosition());
-//		position.rotation = Defaults.PLAYER_ROTATION_HEADING_RIGHT;
-//
-//		Texture tex = new Texture(
-//				Gdx.files.internal(textureFile));
-//		texture.region = new TextureRegion(tex, 0, 0, tex.getWidth() - 1,
-//				tex.getHeight() - 1);
-//
-//		collidable.collidable_zone = new Rectangle(0, 0, tex.getWidth()-1, tex.getHeight()-1);
-//
-//		teamComponent.team = team;
-//		health.health = Defaults.HEALTH;
-//
-//		exhaust.pe_left = new ParticleEffect();
-//		exhaust.pe_right = new ParticleEffect();
-//		exhaust.pe_left.load(Gdx.files.internal("exhaust_left.particle"), Gdx.files.internal(""));
-//		exhaust.pe_right.load(Gdx.files.internal("exhaust_right.particle"), Gdx.files.internal(""));
-//		exhaust.pe_left.start();
-//		exhaust.pe_right.start();
-//
-//		hurt.pe_hurt = new ParticleEffect();
-//		hurt.pe_hurt.load(Gdx.files.internal("hurt.particle"), Gdx.files.internal(""));
-//		hurt.pe_hurt.start();
-//
-//		newEntity.add(ship);
-//		newEntity.add(movement);
-//		newEntity.add(position);
-//		newEntity.add(texture);
-//		newEntity.add(weaponed);
-//		newEntity.add(exhaust);
-//		newEntity.add(hurt);
-//		newEntity.add(collidable);
-//		newEntity.add(teamComponent);
-//		newEntity.add(health);
+		newEntity.add(ship);
+		newEntity.add(movement);
+		newEntity.add(position);
+		newEntity.add(texture);
+		newEntity.add(weaponed);
+		newEntity.add(exhaust);
+		newEntity.add(hurt);
+		newEntity.add(collidable);
+		newEntity.add(teamComponent);
+		newEntity.add(health);
 
 	}
 
