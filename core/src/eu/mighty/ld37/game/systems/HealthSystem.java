@@ -115,7 +115,6 @@ public class HealthSystem extends IteratingSystem {
 		if (aishipc != null) {
 			aiship = ((PooledEngine) this.getEngine())
 					.createComponent(AIShipComponent.class);
-			aiship.idAIObject = aishipc.idAIObject;
 		}
 
 
