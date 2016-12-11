@@ -24,16 +24,28 @@ public class EuclideanDistanceHeuristic extends EstimatedCostHeuristic
 	@Override
 	public double obtainEstimatedCost(int currentNode, int targetNode) {
 		// TODO Auto-generated method stub
-		NodeRepresentations current = this.nodeList.get(currentNode);
-		NodeRepresentations target = this.nodeList.get(targetNode);
+		
+		double estimatedCost = Double.MAX_VALUE;
+		
+		try
+		{
+		
+			NodeRepresentations current = this.nodeList.get(currentNode);
+			NodeRepresentations target = this.nodeList.get(targetNode);
 		
 	
 		
-		double estimatedCost = Math.min(0.5 * (Math.pow(current.getX() - target.getX(), 2) +
+		estimatedCost = Math.min(0.5 * (Math.pow(current.getX() - target.getX(), 2) +
 				Math.pow(current.getY() - target.getY(), 2)), 
 				0.5 * (Math.pow(current.getX() - target.getX() + Defaults.mapWidth,2) +
 				Math.pow(current.getY() - target.getY(), 2)));
 		
+		} 
+		catch(Exception e)
+		{
+			System.out.println("XXXX Current node "+currentNode);
+			System.out.println("XXXX Target node "+targetNode);
+		}
 		
 		return estimatedCost;
 	}

@@ -44,6 +44,8 @@ public final class Defaults {
 	
 	public final static int NUM_HEIGHT_REGIONS = 30;
 	public final static int NUM_WIDTH_REGIONS = 50;
+	public final static int MAX_NODES = 30 * 50;
+	
 	public final static int NUM_WIDTH_ZONES = 5;
 	public final static int NUM_HEIGHT_ZONES = 3;
 

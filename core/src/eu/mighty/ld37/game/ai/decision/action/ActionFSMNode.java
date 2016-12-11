@@ -6,6 +6,7 @@ import eu.mighty.ld37.game.ai.decision.DecisionTreeFSMNode;
 public  abstract class ActionFSMNode extends DecisionTreeFSMNode {
 
 	int nextNode;
+	int nextIdShip;
 
 	public ActionFSMNode( int idObject, AIIteration aiIteration)
 	{
@@ -19,6 +20,16 @@ public  abstract class ActionFSMNode extends DecisionTreeFSMNode {
 	public void setNextNode(int nextNode) {
 		this.nextNode = nextNode;
 	}
+
+	public int getNextIdShip() {
+		return nextIdShip;
+	}
+
+	public void setNextIdShip(int nextIdShip) {
+		this.nextIdShip = nextIdShip;
+	}
+	
+	
 
 	
 	

@@ -2,6 +2,7 @@ package eu.mighty.ld37.game.ai.decision.action;
 
 import ai.decision.decisiontree.DecisionTreeNode;
 import eu.mighty.ld37.game.ai.AIIteration;
+import eu.mighty.ld37.game.ai.TargetObject;
 
 public class ActionGoToClosesTeammateGoal extends ActionFSMNode {
 
@@ -9,12 +10,16 @@ public class ActionGoToClosesTeammateGoal extends ActionFSMNode {
 		super(idObject, aiIteration);
 
 		this.nextNode = -1;
+		this.nextIdShip = -1;
 	}
 
 	@Override
 	public DecisionTreeNode makeDecision() {
 
-		this.nextNode = this.aiIteration.obtainClosestTeamMateGoalSquare(this.idObject);
+		
+		TargetObject target = this.aiIteration.obtainClosestTeamMateGoalSquare(this.idObject);
+		this.nextNode = target.getNextNode();
+		this.nextIdShip = target.getNextIdShip();
 
 		return this;
 	}

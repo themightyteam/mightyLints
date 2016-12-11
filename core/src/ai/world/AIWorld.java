@@ -176,7 +176,6 @@ public class AIWorld
 	private void obtainPathfindingGraph()
 	{
 
-
 		//Init variables
 		int connCounter = 0;
 

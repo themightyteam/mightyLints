@@ -113,7 +113,7 @@ public class AISystem extends IteratingSystem {
 		//Check if the model has not followed the pathfinding algorithm or if the target region was reached
 		if (aiShip.currentPath != null)
 		{	
-			if ((newRegion != aiShip.currentRegion) && (newRegion != aiShip.idExpectedNode))
+			if ((newRegion != aiShip.currentPath.getPredConn().get(0).getSourceNodeId()) && (newRegion != aiShip.idExpectedNode))
 			{
 				//Put the path to null
 				aiShip.currentPath=null;
@@ -279,6 +279,7 @@ public class AISystem extends IteratingSystem {
 							ActionFSMNode targetNode = (ActionFSMNode) decision;
 
 							aiShip.idTargetNode = targetNode.getNextNode();
+							aiShip.targetShipId = targetNode.getNextNode();
 						}
 
 
@@ -305,6 +306,24 @@ public class AISystem extends IteratingSystem {
 										new Float(this.aiWorld.getNodeList().get(aiShip.idExpectedNode).getY()));
 							}
 						}
+						else
+						{
+							//Chose target node here
+							if (this.entityMap.containsKey(aiShip.targetShipId))
+							{
+								Entity targetEntity = this.entityMap.get(aiShip.targetShipId);
+								
+								TransformComponent otherTrans = this.transformMapper.get(targetEntity);
+								
+								aiShip.nextObjPos = new Vector2(
+										new Float(otherTrans.pos.x),
+										new Float(otherTrans.pos.y)
+										);
+								
+							}
+							
+						}
+				
 
 					}
 
@@ -327,6 +346,8 @@ public class AISystem extends IteratingSystem {
 			AIShipComponent aiComponent)
 	{
 
+	
+		
 		TransformComponent transComponent = this.transformMapper.get(entity); 
 		float myX = transComponent.pos.x;
 		float myY = transComponent.pos.y;
@@ -340,6 +361,9 @@ public class AISystem extends IteratingSystem {
 		boolean upKeyPressed = false;
 		boolean downKeyPressed = false;
 
+		spaceKeyPressed = true;
+		
+		
 		if (myY - objectiveY > 0)
 		{
 			downKeyPressed = true;
@@ -394,6 +418,7 @@ public class AISystem extends IteratingSystem {
 				//Initialize stuff here
 				aiShipComp.idAIObject = this.currentAIId;
 				aiShipComp.idTargetNode = -1;
+				aiShipComp.targetShipId = -1;
 				aiShipComp.nextObjPos = new Vector2( new Float(Math.random() * Defaults.mapWidth),
 						new Float(Math.random() * Defaults.mapHeight));
 				//Create the new decision system

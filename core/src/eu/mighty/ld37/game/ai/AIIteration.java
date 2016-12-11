@@ -77,28 +77,27 @@ public class AIIteration {
 
 	}
 	
-	public int obtainRandomRegion(int idObject)
+	public TargetObject obtainRandomRegion(int idObject)
 	{
+		int idMin = -1;
 		float xPos = new Float(Math.random()*Defaults.mapWidth);
 		float yPos = new Float(Math.random()*Defaults.mapHeight);
 		
 		int nextRegion = this.mapProcessor.obtainCurrentRegion(xPos, 
 			yPos);
 		
-		return nextRegion;
+		return new TargetObject(idMin, nextRegion);
 	}
 	
 	public int getDecisionIt()
 	{
 		return currentIt;
 	}
-
-
 	
-
-	public int obtainClosestTeamMateGoalSquare(int idObject)
+	public TargetObject obtainClosestTeamMateGoalSquare(int idObject)
 	{
 		int nextRegion = -1;
+		int idMin = -1;
 		
 		if (this.entityMap.containsKey(idObject))
 		{
@@ -117,8 +116,7 @@ public class AIIteration {
 				myList = this.goalEnemyTeamList;
 			}
 			
-			int idMin = this.obtainIdClosestDistance(idObject, myList);
-			
+			idMin = this.obtainIdClosestDistance(idObject, myList);
 			if (idMin != -1)
 			{
 				
@@ -133,13 +131,14 @@ public class AIIteration {
 				//TODO - initialize things (probably not needed)
 			}
 		}
-		return nextRegion;
+		return new TargetObject(idMin, nextRegion);
 	}
 	
 	
-	public int obtainClosestGoalEnemySquare(int idObject)
+	public TargetObject obtainClosestGoalEnemySquare(int idObject)
 	{
 		int nextRegion = -1;
+		int idMin = -1;
 		
 		if (this.entityMap.containsKey(idObject))
 		{
@@ -158,7 +157,7 @@ public class AIIteration {
 				myList = this.goalFriendTeamList;
 			}
 			
-			int idMin = this.obtainIdClosestDistance(idObject, myList);
+			idMin = this.obtainIdClosestDistance(idObject, myList);
 			
 			if (idMin != -1)
 			{
@@ -174,13 +173,14 @@ public class AIIteration {
 				//TODO - initialize things (probably not needed)
 			}
 		}
-		return nextRegion;
+		return new TargetObject(idMin, nextRegion);
 	}
 	
 
-	public int obtainClosestTeamMateSquare(int idObject)
+	public TargetObject obtainClosestTeamMateSquare(int idObject)
 	{
 		int nextRegion = -1;
+		int idMin = -1;
 		
 		if (this.entityMap.containsKey(idObject))
 		{
@@ -199,11 +199,9 @@ public class AIIteration {
 				myList = this.enemyTeamList;
 			}
 			
-			int idMin = this.obtainIdClosestDistance(idObject, myList);
-			
+			idMin = this.obtainIdClosestDistance(idObject, myList);
 			if (idMin != -1)
 			{
-				
 				Vector3 myPos = this.transformMapper.get(this.entityMap.get(idObject)).pos;		
 				
 				//Obtain the region of this node
@@ -215,12 +213,13 @@ public class AIIteration {
 				//TODO - initialize things (probably not needed)
 			}
 		}
-		return nextRegion;
+		return new TargetObject(idMin,nextRegion);
 	}
 	
-	public int obtainClosestEnemySquare(int idObject)
+	public TargetObject obtainClosestEnemySquare(int idObject)
 	{
 		int nextRegion = -1;
+		int idMin = -1;
 		
 		if (this.entityMap.containsKey(idObject))
 		{
@@ -239,7 +238,7 @@ public class AIIteration {
 				myList = this.friendTeamList;
 			}
 			
-			int idMin = this.obtainIdClosestDistance(idObject, myList);
+			idMin = this.obtainIdClosestDistance(idObject, myList);
 			
 			if (idMin != -1)
 			{
@@ -255,7 +254,7 @@ public class AIIteration {
 				//TODO - initialize things (probably not needed)
 			}
 		}
-		return nextRegion;
+		return new TargetObject(idMin, nextRegion);
 	}
 	
 	
