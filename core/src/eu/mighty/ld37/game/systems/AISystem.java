@@ -321,13 +321,9 @@ public class AISystem extends IteratingSystem {
 								aiShip.nextObjPos = new Vector2(
 										new Float(otherTrans.pos.x),
 										new Float(otherTrans.pos.y)
-										);
-								
-							}
-							
+										);		
+							}	
 						}
-				
-
 					}
 
 					boolean blockfire = false;
