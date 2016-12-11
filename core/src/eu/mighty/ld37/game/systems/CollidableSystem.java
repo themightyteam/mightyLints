@@ -152,12 +152,19 @@ public class CollidableSystem extends EntitySystem {
 				HealthComponent health = entity.getComponent(HealthComponent.class);
 				if (health != null) {
 					health.health -= Defaults.MISSILE_HURT;
-					System.out.println("Hurt in team " + team.team + " by missile");
+					if (health.health <= 0) {
+						System.out.println("Ship of team " + team.team + " destroyed by missile");
+						if (team.team == Defaults.FRIEND_TEAM) {
+							sl.pointFriendTeam();
+						} else {
+							sl.pointEnemyTeam();
+						}
+					}
+					//System.out.println("Hurt in team " + team.team + " by missile");
 				}
 			}
 		}
 	}
-
 }
 
 
