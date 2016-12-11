@@ -32,7 +32,7 @@ public class ScoresRenderer {
 
 		bitmapFont.setColor(Color.ORANGE);
 		bitmapFont.draw(mybatch,
-				"orange lints: " + String.valueOf(cyanTeamScore),
+				"orange lints: " + String.valueOf(orangeTeamScore),
 				Defaults.windowWidth * 13 / 20,
 				Defaults.windowHeight - 20);
 		mybatch.end();
