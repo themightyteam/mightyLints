@@ -64,21 +64,22 @@ public class UserControlledSystem extends IteratingSystem {
 		movement.accel.x = 0;
 		movement.velocity.y = 0;
 		
-		if (Gdx.input.isKeyPressed(Keys.LEFT)) {
+		if (Gdx.input.isKeyPressed(Keys.LEFT) || Gdx.input.isKeyPressed(Keys.A)) {
 			movement.accel.x = Defaults.MAX_ACCEL_X * -1;
 			transform.rotation = Defaults.PLAYER_ROTATION_HEADING_LEFT;
 		}
 
-		if (Gdx.input.isKeyPressed(Keys.RIGHT)) {
+		if (Gdx.input.isKeyPressed(Keys.RIGHT)
+				|| Gdx.input.isKeyPressed(Keys.D)) {
 			movement.accel.x = Defaults.MAX_ACCEL_X;
 			transform.rotation = Defaults.PLAYER_ROTATION_HEADING_RIGHT;
 		}
 
-		if (Gdx.input.isKeyPressed(Keys.UP)) {
+		if (Gdx.input.isKeyPressed(Keys.UP) || Gdx.input.isKeyPressed(Keys.W)) {
 			movement.velocity.y = Defaults.MAX_SPEED_Y;
 		}
 
-		if (Gdx.input.isKeyPressed(Keys.DOWN)) {
+		if (Gdx.input.isKeyPressed(Keys.DOWN) || Gdx.input.isKeyPressed(Keys.S)) {
 			movement.velocity.y = Defaults.MAX_SPEED_Y * -1;
 		}
 
