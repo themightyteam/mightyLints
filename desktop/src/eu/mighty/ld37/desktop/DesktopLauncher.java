@@ -11,7 +11,7 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.width = Defaults.windowWidth;
 		config.height = Defaults.windowHeight;
-		config.resizable = true;
+		config.resizable = false;
 		config.title = Defaults.windowTitle;
 		new LwjglApplication(new MightyLD37Game(), config);
 	}
