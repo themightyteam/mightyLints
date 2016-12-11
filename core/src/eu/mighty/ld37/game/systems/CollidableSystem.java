@@ -33,6 +33,7 @@ public class CollidableSystem extends EntitySystem {
 		ComponentMapper<ShipComponent> sm = ComponentMapper.getFor(ShipComponent.class);
 		ComponentMapper<CanScoreComponent> csm = ComponentMapper.getFor(CanScoreComponent.class);
 		ComponentMapper<GoalComponent> gm = ComponentMapper.getFor(GoalComponent.class);
+		ComponentMapper<TeamComponent> teamM = ComponentMapper.getFor(TeamComponent.class);
 
 
 		Entity entityi, entityj;
@@ -61,24 +62,30 @@ public class CollidableSystem extends EntitySystem {
 					&&(Math.abs(transformi.pos.y - transformj.pos.y) < collidablei.collidable_zone.getHeight())) {
 					hurti = hm.get(entityi);
 					hurtj = hm.get(entityj);
-
-					//bulleti = entityi.getComponent(BulletComponent.class);
-					//bulletj = entityj.getComponent(BulletComponent.class);
 					shipi = sm.get(entityi);
 					shipj = sm.get(entityj);
 					csi = csm.get(entityi);
 					csj = csm.get(entityj);
 					goali = gm.get(entityi);
 					goalj = gm.get(entityj);
+
 					if (shipi != null && shipj != null) {
 						if (csi != null && goalj != null) {
-							sl.goalFriendTeam();
+							teami = teamM.get(entityi);
+							teamj = teamM.get(entityj);
+							if (teami.team != teamj.team) {
+								sl.goalFriendTeam();
+							}
 						} else if (goali != null && csj != null) {
-							sl.goalEnemyTeam();
+							teami = teamM.get(entityi);
+							teamj = teamM.get(entityj);
+							if (teami.team != teamj.team) {
+								sl.goalEnemyTeam();
+							}
 						} else {
 							if (hurti != null) {
 								hurti.hurted = true;
-								teami = entityi.getComponent(TeamComponent.class);
+								teami = teamM.get(entityi);
 								if (teami != null) {
 									if (entityi.getComponent(HealthComponent.class) != null) {
 										entityi.getComponent(HealthComponent.class).health -= 10;
@@ -88,7 +95,7 @@ public class CollidableSystem extends EntitySystem {
 							}
 							if (hurtj != null) {
 								hurtj.hurted = true;
-								teamj = entityj.getComponent(TeamComponent.class);
+								teamj = teamM.get(entityj);
 								if (teamj != null) {
 									if (entityj.getComponent(HealthComponent.class) != null) {
 										entityj.getComponent(HealthComponent.class).health -= 10;
