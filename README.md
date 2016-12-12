@@ -60,4 +60,4 @@ Use your favorite browser and point it to http://0.0.0.0:8000
 
 
 #LINKS
-Check this link for the LD Entry: TBD
+Check this link for the LD Entry: http://ludumdare.com/compo/ludum-dare-37/?action=preview&uid=92356
