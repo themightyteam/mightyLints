@@ -79,6 +79,7 @@ public final class Defaults {
 	public static final int ROLE_GOAL = 2;
 
 	public static final float TIME_TO_RESCORE = 3.0f;
+	public static final float TIME_TO_PERFORM_AISYSTEM_SEC = 0.06f;
 
 	public static final int SCREEN_INITIAL_WAIT_TIME = 30;
 

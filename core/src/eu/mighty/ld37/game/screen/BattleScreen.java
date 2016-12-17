@@ -59,6 +59,9 @@ public class BattleScreen implements Screen {
 
 	private int playerRole;
 
+	private float AISystemTickCounter = 0;
+	private AISystem aiSystem;
+
 	public BattleScreen(MightyLD37Game mightyLD37Game, int playerRole) {
 		this.game = mightyLD37Game;
 		this.scoreLogic = new ScoreLogic();
@@ -78,6 +81,7 @@ public class BattleScreen implements Screen {
 		this.entityEngine.addSystem(new CollidableSystem(scoreLogic));
 		this.entityEngine.addSystem(new HealthSystem(game.audioClips, scoreLogic));
 		this.entityEngine.addSystem(new RespawnSystem(playerRole));
+		this.aiSystem = new AISystem();
 		this.entityEngine.addSystem(new AISystem());
 		this.entityEngine.addSystem(new CanScoreSystem());
 		createBackgrounds();
@@ -102,12 +106,28 @@ public class BattleScreen implements Screen {
 			return;
 		}
 
+		// AISystem needs a lot of processing, we only can process it sometimes
+		enableAIIfIfHasTo(delta);
+
 		Gdx.gl.glClearColor(0, 0, 0.2f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		this.entityEngine.update(delta);
 
 		stateUpdate();
+	}
+
+	// Updates AISystemTickCounter and activates AI when <= 0
+	private void enableAIIfIfHasTo(float delta) {
+		this.AISystemTickCounter -= delta;
+		if (this.AISystemTickCounter <= 0) {
+			this.AISystemTickCounter = Defaults.TIME_TO_PERFORM_AISYSTEM_SEC;
+			// this.aiSystem.setProcessing(true);
+			this.entityEngine.addSystem(aiSystem);
+		} else {
+			// this.aiSystem.setProcessing(false);
+			this.entityEngine.removeSystem(aiSystem);
+		}
 	}
 
 	private void stateUpdate() {
