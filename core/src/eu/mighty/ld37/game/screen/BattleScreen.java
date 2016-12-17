@@ -306,7 +306,7 @@ public class BattleScreen implements Screen {
 	private Vector3 getRandomPosition() {
 		Vector3 position = new Vector3();
 		position.x = (float)Math.random() * Defaults.mapWidth;
-		position.y = (float)Math.random() * Defaults.mapHeight;
+		position.y = (float) Math.random() * (Defaults.mapHeight - Defaults.windowHeight / 2);
 		position.z = 0.0f;
 		return position;
 	}
